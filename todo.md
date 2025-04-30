@@ -26,9 +26,9 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 ## Milestone 2 – CSV Upload & Parse
 
-- [ ] **2.1** Install Papa Parse; implement `parseCsv(file)`. <!-- prompt:02-01 -->
-- [ ] **2.2** Build `<FilePicker>` (plain file input, drag style optional). <!-- prompt:02-02 -->
-- [ ] **2.3** Unit-test FilePicker fires `onFile`. <!-- prompt:02-03 -->
+- [x] **2.1** Install Papa Parse and implement `parseCsv(file)` function. <!-- prompt:02-01 -->
+- [x] **2.2** Build `<FilePicker>` (plain file input, drag style optional). <!-- prompt:02-02 -->
+- [x] **2.3** Unit-test FilePicker fires `onFile`. <!-- prompt:02-03 -->
 - [ ] **2.4** Detect duplicate headers; store non-blocking warning. <!-- prompt:02-04 -->
 - [ ] **2.5** Create `DatasetContext` + `useReducer`. <!-- prompt:02-05 -->
 
