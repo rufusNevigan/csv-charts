@@ -20,7 +20,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 ## Milestone 1 – Hello Vite
 
 - [x] **1.1** Replace boilerplate with minimal `<App />` + heading. <!-- prompt:01-01 -->
-- [ ] **1.2** Snapshot test for heading. <!-- prompt:01-02 -->
+- [x] **1.2** Snapshot test for heading. <!-- prompt:01-02 -->
 
 ---
 
