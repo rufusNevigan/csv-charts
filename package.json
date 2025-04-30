@@ -10,16 +10,19 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "preview": "vite preview",
     "prepare": "husky install",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@testing-library/jest-dom": "^6.4.2"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.15.3",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

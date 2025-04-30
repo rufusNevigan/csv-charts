@@ -6,10 +6,11 @@ module.exports = {
     node: true,
   },
   extends: [
-    'airbnb',
-    'airbnb-typescript',
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
+    'airbnb',
+    'airbnb-typescript',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
@@ -56,4 +57,12 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: ['e2e/**/*.ts', 'playwright.config.ts'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
+  ],
 }; 
