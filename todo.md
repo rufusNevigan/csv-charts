@@ -9,7 +9,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 ## Milestone 0 – Repo, Tooling & CI
 
 - [x] **0.1** Create GitHub repo `csv-charts`, set `main` default, enable branch protection (require CI green). <!-- prompt:00-01 -->
-- [ ] **0.2** Bootstrap Vite + React-TS (`npm create vite@latest`). <!-- prompt:00-02 -->
+- [x] **0.2** Bootstrap Vite + React-TS (`npm create vite@latest`). <!-- prompt:00-02 -->
 - [ ] **0.3** Add ESLint (airbnb + typescript), Prettier, `.editorconfig`, Husky pre-commit. <!-- prompt:00-03 -->
 - [ ] **0.4** Install Vitest + React Testing Library; configure JSDOM. <!-- prompt:00-04 -->
 - [ ] **0.5** Add Playwright smoke test (`home.spec.ts`). <!-- prompt:00-05 -->
@@ -79,12 +79,4 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 ## Milestone 8 – Packaging & Docs
 
-- [ ] **8.1** Production build (`vite build`) < 250 kB gzip. <!-- prompt:08-01 -->
-- [ ] **8.2** Write comprehensive `README.md` (desktop-only note). <!-- prompt:08-02 -->
-- [ ] **8.3** Add MIT `LICENSE`. <!-- prompt:08-03 -->
-- [ ] **8.4** Create GitHub Release v0.1. <!-- prompt:08-04 -->
-
----
-
-### Done? 🎉  
-When every box is ticked, tag release `v0.1` and celebrate!
+- [ ] **8.1** Production build (`
