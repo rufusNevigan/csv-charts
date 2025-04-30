@@ -8,7 +8,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 ## Milestone 0 – Repo, Tooling & CI
 
-- [ ] **0.1** Create GitHub repo `csv-charts`, set `main` default, enable branch protection (require CI green). <!-- prompt:00-01 -->
+- [x] **0.1** Create GitHub repo `csv-charts`, set `main` default, enable branch protection (require CI green). <!-- prompt:00-01 -->
 - [ ] **0.2** Bootstrap Vite + React-TS (`npm create vite@latest`). <!-- prompt:00-02 -->
 - [ ] **0.3** Add ESLint (airbnb + typescript), Prettier, `.editorconfig`, Husky pre-commit. <!-- prompt:00-03 -->
 - [ ] **0.4** Install Vitest + React Testing Library; configure JSDOM. <!-- prompt:00-04 -->
