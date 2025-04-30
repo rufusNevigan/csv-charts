@@ -10,7 +10,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 - [x] **0.1** Create GitHub repo `csv-charts`, set `main` default, enable branch protection (require CI green). <!-- prompt:00-01 -->
 - [x] **0.2** Bootstrap Vite + React-TS (`npm create vite@latest`). <!-- prompt:00-02 -->
-- [ ] **0.3** Add ESLint (airbnb + typescript), Prettier, `.editorconfig`, Husky pre-commit. <!-- prompt:00-03 -->
+- [x] **0.3** Add ESLint (airbnb + typescript), Prettier, `.editorconfig`, Husky pre-commit. <!-- prompt:00-03 -->
 - [ ] **0.4** Install Vitest + React Testing Library; configure JSDOM. <!-- prompt:00-04 -->
 - [ ] **0.5** Add Playwright smoke test (`home.spec.ts`). <!-- prompt:00-05 -->
 - [ ] **0.6** GitHub Actions workflow for lint, unit, e2e. <!-- prompt:00-06 -->
