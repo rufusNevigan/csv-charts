@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, ChangeEvent } from 'react';
 
 interface FilePickerProps {
   onFile: (file: File) => void;
-  accept: string;
+  accept?: string;
 }
 
-function FilePicker({ onFile, accept = '.csv' }: FilePickerProps) {
+export default function FilePicker({ onFile, accept = '.csv' }: FilePickerProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFile = useCallback((file: File) => {
@@ -37,12 +37,12 @@ function FilePicker({ onFile, accept = '.csv' }: FilePickerProps) {
     }
   }, [handleFile]);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       handleFile(file);
     }
-  }, [handleFile]);
+  };
 
   return (
     <div
@@ -55,18 +55,17 @@ function FilePicker({ onFile, accept = '.csv' }: FilePickerProps) {
         type="file"
         id="file-input"
         data-testid="file-input"
+        aria-label="Upload CSV file"
         accept={accept}
-        onChange={handleChange}
-        className="hidden"
+        onChange={handleFileChange}
+        className="sr-only"
       />
       <label htmlFor="file-input" className="file-picker-label">
         <span className="file-picker-text">
-          {isDragging ? 'Drop your CSV file here' : 'Click to upload or drag and drop'}
+          Upload CSV file
         </span>
         <span className="file-picker-hint">CSV files only</span>
       </label>
     </div>
   );
 }
-
-export default FilePicker;

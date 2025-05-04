@@ -1,33 +1,33 @@
-import { ParsedCsv } from './parseCsv';
+interface NumericColumns {
+  xKey?: string;
+  yKey?: string;
+}
 
 /**
- * Detects numeric columns in a CSV dataset by checking if all values in a column
- * can be converted to numbers. Returns the first two numeric columns found.
- * 
- * @param headers - Array of column headers
- * @param rows - Array of row data
- * @returns Object containing the first two numeric column keys, or undefined if not found
+ * Detects the first two numeric columns in a dataset.
+ * Returns undefined for xKey/yKey if no numeric columns are found.
  */
-export function detectNumericColumns(headers: string[], rows: Record<string, string>[]): { xKey?: string; yKey?: string } {
-  if (!headers.length || !rows.length) {
+function detectNumericColumns(
+  headers: string[],
+  rows: Record<string, string>[],
+): NumericColumns {
+  if (!headers?.length || !rows?.length) {
     return {};
   }
 
-  // Helper to check if a value is numeric
-  const isNumeric = (value: string): boolean => {
-    return !isNaN(Number(value)) && value.trim() !== '';
+  const isNumeric = (value: string) => {
+    const num = Number(value);
+    return !Number.isNaN(num) && typeof num === 'number';
   };
 
-  // Find all numeric columns
-  const numericColumns = headers.filter(header => {
-    // Check first 10 rows to determine if column is numeric
-    const sampleRows = rows.slice(0, 10);
-    return sampleRows.every(row => isNumeric(row[header]));
-  });
+  // Check first 10 rows to determine if a column is numeric
+  const sampleRows = rows.slice(0, 10);
+  const numericColumns = headers.filter((header) => (
+    sampleRows.every((row) => isNumeric(row[header]))
+  ));
 
-  // Return first two numeric columns as x and y keys
-  return {
-    xKey: numericColumns[0],
-    yKey: numericColumns[1],
-  };
-} 
+  const [xKey, yKey] = numericColumns;
+  return { xKey, yKey };
+}
+
+export default detectNumericColumns;

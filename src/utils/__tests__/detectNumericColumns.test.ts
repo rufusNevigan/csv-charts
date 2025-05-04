@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { detectNumericColumns } from '../detectNumericColumns';
+import detectNumericColumns from '../detectNumericColumns';
 
 describe('detectNumericColumns', () => {
   it('returns empty object for empty dataset', () => {
@@ -42,4 +42,4 @@ describe('detectNumericColumns', () => {
       yKey: undefined,
     });
   });
-}); 
+});

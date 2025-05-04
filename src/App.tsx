@@ -1,7 +1,7 @@
-import { useDataset } from './contexts/DatasetContext';
+import useDataset from './contexts/useDataset';
 import FilePicker from './components/FilePicker';
-import { ChartCanvas } from './components/ChartCanvas';
-import { ColumnSelector } from './components/ColumnSelector';
+import ChartCanvas from './components/ChartCanvas';
+import ColumnSelector from './components/ColumnSelector';
 import './App.css';
 import './components/FilePicker.css';
 

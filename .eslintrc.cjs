@@ -27,6 +27,16 @@ module.exports = {
       { allowConstantExport: true },
     ],
     'react/react-in-jsx-scope': 'off',
+    'react/require-default-props': 'off',
+    'jsx-a11y/label-has-associated-control': [
+      'error',
+      {
+        labelComponents: ['label'],
+        labelAttributes: ['htmlFor'],
+        controlComponents: ['input', 'select', 'textarea'],
+        depth: 3,
+      },
+    ],
     'import/extensions': [
       'error',
       'ignorePackages',
@@ -46,6 +56,9 @@ module.exports = {
           'vitest.setup.ts',
           'src/**/*.test.ts',
           'src/**/*.test.tsx',
+          'src/setupTests.ts',
+          'tests/**/*.ts',
+          'tests/**/*.tsx',
         ],
       },
     ],
@@ -62,6 +75,12 @@ module.exports = {
       files: ['e2e/**/*.ts', 'playwright.config.ts'],
       rules: {
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
+    {
+      files: ['**/logger.ts', '**/logger.test.ts'],
+      rules: {
+        'no-console': 'off',
       },
     },
   ],

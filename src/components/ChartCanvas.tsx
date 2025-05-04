@@ -8,12 +8,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useDataset } from '../contexts/DatasetContext';
-import { detectNumericColumns } from '../utils/detectNumericColumns';
+import useDataset from '../contexts/useDataset';
+import detectNumericColumns from '../utils/detectNumericColumns';
 
-export const ChartCanvas: React.FC = () => {
+function ChartCanvas(): JSX.Element {
   const { state, dispatch } = useDataset();
-  const { headers, rows, xKey, yKey } = state;
+  const {
+    headers, rows, xKey, yKey,
+  } = state;
 
   // Auto-detect numeric columns if not already set
   useEffect(() => {
@@ -26,7 +28,7 @@ export const ChartCanvas: React.FC = () => {
   }, [headers, rows, xKey, yKey, dispatch]);
 
   // If no dataset is loaded, show a prompt
-  if (!headers || !rows) {
+  if (!headers || !rows || headers.length === 0) {
     return (
       <div className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200">
         <p className="text-gray-500">Upload a CSV file to visualize data</p>
@@ -50,20 +52,25 @@ export const ChartCanvas: React.FC = () => {
   }));
 
   return (
-    <div 
-      className="block relative h-96 w-full" 
+    <div
+      className="block relative h-96 w-full"
       data-testid="chart-container"
-      style={{ 
-        width: '100%', 
+      style={{
+        width: '100%',
         height: '400px',
         minHeight: '400px',
         visibility: 'visible',
         display: 'block',
-        position: 'relative'
+        position: 'relative',
       }}
     >
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <BarChart
+          data={chartData}
+          margin={{
+            top: 20, right: 30, left: 20, bottom: 5,
+          }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey={xKey}
@@ -79,4 +86,6 @@ export const ChartCanvas: React.FC = () => {
       </ResponsiveContainer>
     </div>
   );
-}; 
+}
+
+export default ChartCanvas;

@@ -1,11 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
+import DatasetProvider from '../contexts/DatasetContext';
 
 describe('App', () => {
   it('renders the correct heading text', () => {
-    render(<App />);
-    const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toHaveTextContent('CSV Charts');
+    render(
+      <DatasetProvider>
+        <App />
+      </DatasetProvider>,
+    );
+    expect(screen.getByRole('heading')).toHaveTextContent('CSV Charts');
   });
 });
