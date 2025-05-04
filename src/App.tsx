@@ -1,32 +1,23 @@
-import { useState } from 'react';
+import { useDataset } from './contexts/DatasetContext';
 import FilePicker from './components/FilePicker';
-import { parseCsv } from './utils/parseCsv';
+import { ChartCanvas } from './components/ChartCanvas';
+import { ColumnSelector } from './components/ColumnSelector';
 import './App.css';
 import './components/FilePicker.css';
 
-function App() {
-  const [error, setError] = useState<string | null>(null);
-
-  const handleFile = async (file: File) => {
-    try {
-      setError(null);
-      await parseCsv(file);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred');
-      }
-    }
-  };
+export default function App() {
+  const { dispatch } = useDataset();
 
   return (
-    <div className="app">
-      <h1>CSV Charts</h1>
-      <FilePicker onFile={handleFile} accept=".csv" />
-      {error && <div className="error">{error}</div>}
-    </div>
+    <main className="min-h-screen p-8 bg-slate-50">
+      <h1 className="text-3xl font-semibold text-center mb-8">CSV Charts</h1>
+      <div className="max-w-4xl mx-auto">
+        <FilePicker onFile={(file) => dispatch({ type: 'SET_FILE', payload: file })} />
+        <ColumnSelector />
+        <div className="mt-8 bg-white p-6 rounded-lg shadow-lg min-h-[500px] relative">
+          <ChartCanvas />
+        </div>
+      </div>
+    </main>
   );
 }
-
-export default App;

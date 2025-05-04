@@ -13,7 +13,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 - [x] **0.3** Add ESLint (airbnb + typescript), Prettier, `.editorconfig`, Husky pre-commit. <!-- prompt:00-03 -->
 - [x] **0.4** Install Vitest + React Testing Library; configure JSDOM. <!-- prompt:00-04 -->
 - [x] **0.5** Add Playwright smoke test (`home.spec.ts`). <!-- prompt:00-05 -->
-- [x] **0.6** GitHub Actions workflow for lint, unit, e2e. <!-- prompt:00-06 -->
+- [x] **0.6** GitHub Actions workflow for lint, unit, e2e. <!-- prompt:00-05 -->
 
 ---
 
@@ -28,21 +28,22 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 - [x] **2.1** Install Papa Parse and implement `parseCsv(file)` function. <!-- prompt:02-01 -->
 - [x] **2.2** Build `<FilePicker>` (plain file input, drag style optional). <!-- prompt:02-02 -->
-- [x] **2.3** Unit-test FilePicker fires `onFile`. <!-- prompt:02-03 -->
-- [ ] **2.4** Detect duplicate headers; store non-blocking warning. <!-- prompt:02-04 -->
-- [ ] **2.5** Create `DatasetContext` + `useReducer`. <!-- prompt:02-05 -->
+- [x] **2.3** Unit-test FilePicker fires `onFile`. <!-- prompt:02-02 -->
+- [x] **2.4** Detect duplicate headers; store non-blocking warning. <!-- prompt:02-03 -->
+- [x] **2.5** Create `DatasetContext` + `useReducer`. <!-- prompt:02-04 -->
+- [x] **2.6** Implement `logger.ts` util; log key actions. <!-- prompt:02-05 -->
 
 ---
 
 ## Milestone 3 – Basic Bar Chart
 
-- [ ] **3.1** Install Recharts; `<SampleBarChart>` with static data + test. <!-- prompt:03-01 -->
+- [x] **3.1** Install Recharts; `<SampleBarChart>` with static data + test. <!-- prompt:03-01 -->
 
 ---
 
 ## Milestone 4 – Wire Upload → Chart
 
-- [ ] **4.1** Build `detectNumericColumns` util. <!-- prompt:04-01 -->
+- [x] **4.1** Build `detectNumericColumns` util. <!-- prompt:04-01 -->
 - [ ] **4.2** Create `<ChartCanvas>` auto-rendering first two numeric cols. <!-- prompt:04-02 -->
 - [ ] **4.3** E2E: upload sample CSV → bars visible. <!-- prompt:04-03 -->
 - [ ] **4.4** Hide canvas when no dataset. <!-- prompt:04-04 -->
@@ -61,10 +62,10 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 ## Milestone 6 – UX Polish & Robustness
 
 - [ ] **6.1** Add `<AppErrorBoundary>` + `<LoadingOverlay>`. <!-- prompt:06-01 -->
-- [ ] **6.2** Add `<ResetButton>` clearing context. <!-- prompt:06-02 -->
-- [ ] **6.3** Implement `logger.ts` util; log key actions. <!-- prompt:06-03 -->
-- [ ] **6.4** Large-file guard (>50 000 rows) with friendly copy. <!-- prompt:06-04 -->
-- [ ] **6.5** Modal component for errors & warnings. <!-- prompt:06-05 -->
+- [ ] **6.2** Add `<ResetButton>` clearing context. <!-- prompt:06-01 -->
+- [ ] **6.3** Large-file guard (>50 000 rows) with friendly copy. <!-- prompt:06-03 -->
+- [ ] **6.4** Modal error system. <!-- prompt:06-02 -->
+- [ ] **6.5** Duplicate-header warning modal. <!-- prompt:06-04 -->
 
 ---
 
@@ -80,9 +81,9 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 ## Milestone 8 – Packaging & Docs
 
 - [ ] **8.1** Production build (`vite build`) < 250 kB gzip. <!-- prompt:08-01 -->
-- [ ] **8.2** Write comprehensive `README.md` (desktop-only note). <!-- prompt:08-02 -->
-- [ ] **8.3** Add MIT `LICENSE`. <!-- prompt:08-03 -->
-- [ ] **8.4** Create GitHub Release v0.1. <!-- prompt:08-04 -->
+- [ ] **8.2** Write comprehensive `README.md` (desktop-only note). <!-- prompt:08-01 -->
+- [ ] **8.3** Add MIT `LICENSE`. <!-- prompt:08-01 -->
+- [ ] **8.4** Create GitHub Release v0.1. <!-- prompt:08-01 -->
 
 ---
 
