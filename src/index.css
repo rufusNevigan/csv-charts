@@ -20,3 +20,42 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+.file-picker {
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  border: 2px dashed #cbd5e1;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.file-picker:hover {
+  background-color: #f1f5f9;
+}
+
+.file-picker.bg-blue-50 {
+  background-color: #eff6ff;
+}
+
+.file-picker.bg-slate-50 {
+  background-color: #f8fafc;
+}
+
+.file-picker-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-picker-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.file-picker-hint {
+  font-size: 0.875rem;
+  color: #64748b;
+}

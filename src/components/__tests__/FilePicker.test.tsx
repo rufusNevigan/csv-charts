@@ -23,7 +23,7 @@ describe('FilePicker', () => {
     render(<FilePicker onFile={mockOnFile} accept=".csv" />);
 
     const file = new File(['test'], 'test.csv', { type: 'text/csv' });
-    const dropZone = screen.getByText('Upload CSV file').closest('.file-picker')!;
+    const dropZone = screen.getByTestId('file-drop-zone');
 
     fireEvent.dragOver(dropZone);
     fireEvent.drop(dropZone, {
@@ -51,7 +51,7 @@ describe('FilePicker', () => {
     const mockOnFile = vi.fn();
     render(<FilePicker onFile={mockOnFile} accept=".csv" />);
 
-    const dropZone = screen.getByText('Upload CSV file').closest('.file-picker')!;
+    const dropZone = screen.getByTestId('file-drop-zone');
 
     fireEvent.dragOver(dropZone);
     fireEvent.drop(dropZone, {
@@ -66,19 +66,19 @@ describe('FilePicker', () => {
   it('shows dragging state when file is dragged over', () => {
     render(<FilePicker onFile={vi.fn()} />);
 
-    const dropZone = screen.getByText('Upload CSV file').closest('.file-picker')!;
+    const dropZone = screen.getByTestId('file-drop-zone');
     fireEvent.dragOver(dropZone);
 
-    expect(dropZone).toHaveClass('dragging');
+    expect(dropZone).toHaveClass('bg-blue-50');
   });
 
   it('hides dragging state when file is dragged out', () => {
     render(<FilePicker onFile={vi.fn()} />);
 
-    const dropZone = screen.getByText('Upload CSV file').closest('.file-picker')!;
+    const dropZone = screen.getByTestId('file-drop-zone');
     fireEvent.dragOver(dropZone);
     fireEvent.dragLeave(dropZone);
 
-    expect(dropZone).not.toHaveClass('dragging');
+    expect(dropZone).toHaveClass('bg-slate-50');
   });
 });
