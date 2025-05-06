@@ -4,45 +4,46 @@ import ChartCanvas from '../ChartCanvas';
 import DatasetProvider from '../../contexts/DatasetContext';
 
 describe('ChartCanvas', () => {
-  it('shows upload prompt when no dataset is loaded', () => {
+  test('shows upload prompt when no dataset is loaded', () => {
     render(
       <DatasetProvider>
         <ChartCanvas />
       </DatasetProvider>,
     );
-    expect(screen.getByText('No numeric columns found in the dataset')).toBeInTheDocument();
+    expect(screen.getByText('Upload a CSV file to visualize data')).toBeInTheDocument();
   });
 
-  it('shows message when no numeric columns are detected', () => {
-    const initialState = {
-      headers: ['name', 'category'],
-      rows: [
-        { name: 'Item 1', category: 'A' },
-        { name: 'Item 2', category: 'B' },
-      ],
+  test('shows message when no numeric columns are detected', () => {
+    const mockState = {
+      headers: ['name', 'city'],
+      rows: [{ name: 'John', city: 'NY' }],
       loading: false,
+      error: undefined,
     };
 
     render(
-      <DatasetProvider initialState={initialState}>
+      <DatasetProvider initialState={mockState}>
         <ChartCanvas />
       </DatasetProvider>,
     );
     expect(screen.getByText('No numeric columns found in the dataset')).toBeInTheDocument();
   });
 
-  it('renders chart when numeric columns are detected', () => {
-    const initialState = {
-      headers: ['name', 'value', 'count'],
+  test('renders chart when numeric columns are detected', () => {
+    const mockState = {
+      headers: ['value', 'count'],
       rows: [
-        { name: 'Item 1', value: '10', count: '5' },
-        { name: 'Item 2', value: '20', count: '10' },
+        { value: '1', count: '10' },
+        { value: '2', count: '20' },
       ],
       loading: false,
+      error: undefined,
+      xKey: 'value',
+      yKey: 'count',
     };
 
     render(
-      <DatasetProvider initialState={initialState}>
+      <DatasetProvider initialState={mockState}>
         <ChartCanvas />
       </DatasetProvider>,
     );

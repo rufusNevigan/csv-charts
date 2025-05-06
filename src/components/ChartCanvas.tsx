@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -16,6 +16,7 @@ function ChartCanvas(): JSX.Element {
   const {
     headers, rows, xKey, yKey, loading,
   } = state;
+  const [isChartReady, setIsChartReady] = useState(false);
 
   // Auto-detect numeric columns if not already set
   useEffect(() => {
@@ -26,6 +27,15 @@ function ChartCanvas(): JSX.Element {
       }
     }
   }, [headers, rows, xKey, yKey, dispatch]);
+
+  // Set chart ready state when data is available
+  useEffect(() => {
+    if (headers && rows && xKey && yKey && !loading) {
+      setIsChartReady(true);
+    } else {
+      setIsChartReady(false);
+    }
+  }, [headers, rows, xKey, yKey, loading]);
 
   // If loading, show loading state
   if (loading) {
@@ -64,6 +74,7 @@ function ChartCanvas(): JSX.Element {
     <div
       className="block relative h-96 w-full"
       data-testid="chart-container"
+      data-ready={isChartReady}
       style={{
         width: '100%',
         height: '400px',

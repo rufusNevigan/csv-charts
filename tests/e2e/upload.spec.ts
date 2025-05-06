@@ -2,55 +2,53 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const currentFilename = fileURLToPath(import.meta.url);
-const currentDirname = path.dirname(currentFilename);
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-test.describe('CSV Upload', () => {
-  test('should upload CSV and display chart', async ({ page }) => {
-    // Enable console logging for debugging purposes
-    // eslint-disable-next-line no-console
-    page.on('console', (msg) => console.log('[Browser]:', msg.text()));
-    page.on('pageerror', (error) => console.error('[Browser Error]:', error));
-    page.on('requestfailed', (request) => console.error('[Failed Request]:', request.url()));
-
-    // Navigate to the app
+test.describe('CSV Upload and Chart Display', () => {
+  test('should upload CSV and display chart with correct data', async ({ page }) => {
+    // Start the dev server and visit the page
     await page.goto('/');
-    
-    // Wait for the page to be ready
-    await page.waitForLoadState('networkidle');
-    
-    // Wait for the React app to render
-    await page.waitForSelector('.file-picker', { state: 'visible', timeout: 10000 });
-    console.log('File picker found');
 
-    // Debug: log the page content
-    const content = await page.content();
-    console.log('Page content:', content);
+    // Find and verify the file picker exists
+    const filePicker = page.getByLabel('Upload CSV file');
+    await expect(filePicker).toBeVisible();
 
-    // Find input and set files
-    const fileInput = page.getByTestId('file-input');
-    const filePath = path.join(currentDirname, '../fixtures/sample.csv');
-    await fileInput.setInputFiles(filePath);
+    // Upload the sample CSV file
+    await filePicker.setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
 
-    // Wait for file to be processed
-    await page.waitForTimeout(1000);
-
-    // Wait for the chart container with increased timeout
+    // Wait for the chart container to appear and be visible
     const chartContainer = page.getByTestId('chart-container');
-    await expect(chartContainer).toBeVisible({ timeout: 10000 });
+    await expect(chartContainer).toBeVisible();
 
-    // Add a small delay to ensure the chart has time to render
-    await page.waitForTimeout(1000);
+    // Wait for the chart to be fully rendered by checking for specific elements
+    // First, wait for the chart container to be ready
+    await expect(chartContainer).toHaveAttribute('data-ready', 'true');
 
-    // Wait for SVG elements to appear (indicating chart is rendered)
-    await page.waitForSelector('svg', { state: 'visible', timeout: 10000 });
+    // Wait for and verify the chart axes are present
+    const xAxis = page.locator('.recharts-xAxis');
+    const yAxis = page.locator('.recharts-yAxis');
+    await expect(xAxis).toBeVisible();
+    await expect(yAxis).toBeVisible();
 
-    // Verify basic chart structure
-    const svg = page.locator('svg').first();
-    await expect(svg).toBeVisible();
+    // Verify the chart displays the correct numeric columns using more specific selectors
+    const xAxisLabel = xAxis.locator('.recharts-label').filter({ hasText: 'age' });
+    const yAxisLabel = yAxis.locator('.recharts-label').filter({ hasText: 'score' });
+    await expect(xAxisLabel).toBeVisible();
+    await expect(yAxisLabel).toBeVisible();
 
-    // Verify we have the expected number of bars (one for each data row)
-    const bars = page.locator('path').filter({ hasText: '' });
-    await expect(bars).toHaveCount(4);
+    // Wait for and verify the bars are rendered
+    // In Recharts, the actual visible bars are path elements inside the bar rectangles
+    const barPaths = page.locator('.recharts-bar-rectangle path');
+    await expect(barPaths).toHaveCount(5); // One bar for each row in sample.csv
+
+    // Verify each bar path is visible and has the correct attributes
+    const paths = await barPaths.all();
+    for (const path of paths) {
+      await expect(path).toBeVisible();
+      // Check for the d attribute which defines the path shape
+      await expect(path).toHaveAttribute('d');
+      // Check for fill color
+      await expect(path).toHaveAttribute('fill', '#3b82f6');
+    }
   });
 });

@@ -1,0 +1,4 @@
+This is not a CSV file
+It contains plain text
+With multiple lines
+And no CSV formatting 

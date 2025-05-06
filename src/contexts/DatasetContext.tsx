@@ -1,7 +1,7 @@
 import React, {
   ReactNode, useReducer, useMemo, useCallback,
 } from 'react';
-import { parseCsv } from '../utils/parseCsv';
+import { parseCsv, InvalidFileError, DuplicateHeadersError } from '../utils/parseCsv';
 import { info, error } from '../utils/logger';
 import { DatasetState, DatasetAction, initialState } from './datasetTypes';
 import DatasetContext from './DatasetContextDefinition';
@@ -14,16 +14,30 @@ function datasetReducer(state: DatasetState, action: DatasetAction): DatasetStat
         ...state,
         loading: true,
         error: undefined,
+        warning: undefined,
       };
     case 'SET_DATA':
+      // Check for missing values
+      const hasMissingValues = action.payload.rows.some((row) => 
+        Object.values(row).some((value) => value === '')
+      );
+      const warning = hasMissingValues ? 'Warning: Some rows contain missing values' : undefined;
+
       return {
         ...state,
         headers: action.payload.headers,
         rows: action.payload.rows,
         loading: false,
         error: undefined,
+        warning,
       };
     case 'SET_KEYS':
+      if (action.payload.xKey === action.payload.yKey) {
+        return {
+          ...state,
+          error: 'X and Y axes must be different columns',
+        };
+      }
       info('Chart keys updated', {
         xKey: action.payload.xKey,
         yKey: action.payload.yKey,
@@ -32,6 +46,7 @@ function datasetReducer(state: DatasetState, action: DatasetAction): DatasetStat
         ...state,
         xKey: action.payload.xKey,
         yKey: action.payload.yKey,
+        error: undefined,
       };
     case 'SET_LOADING':
       return {
@@ -79,10 +94,17 @@ function DatasetProvider({
       const result = await parseCsv(file);
       dispatch({ type: 'SET_DATA', payload: result });
     } catch (err) {
-      if (err instanceof Error) {
+      console.log('Error caught in handleFile:', err);
+      if (err instanceof InvalidFileError || err instanceof DuplicateHeadersError) {
+        console.log('Handling specific error type:', err.constructor.name);
+        console.log('Error message to be dispatched:', err.message);
+        dispatch({ type: 'SET_ERROR', payload: err.message });
+      } else if (err instanceof Error) {
+        console.log('Handling generic Error:', err.message);
         dispatch({ type: 'SET_ERROR', payload: err.message });
       } else {
-        dispatch({ type: 'SET_ERROR', payload: 'An unknown error occurred' });
+        console.log('Handling unknown error type');
+        dispatch({ type: 'SET_ERROR', payload: 'Failed to parse CSV file' });
       }
     }
   }, []);
