@@ -1,5 +1,8 @@
-import React, {
-  ReactNode, useReducer, useMemo, useCallback,
+import {
+  useReducer,
+  ReactNode,
+  useCallback,
+  useMemo,
 } from 'react';
 import { parseCsv, InvalidFileError, DuplicateHeadersError } from '../utils/parseCsv';
 import { info, error } from '../utils/logger';
