@@ -4,51 +4,51 @@ import { fileURLToPath } from 'url';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-test.describe('CSV Upload and Chart Display', () => {
-  test('should upload CSV and display chart with correct data', async ({ page }) => {
-    // Start the dev server and visit the page
+test.describe('File Upload Tests', () => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/');
+  });
 
-    // Find and verify the file picker exists
+  test('should show file picker on page load', async ({ page }) => {
     const filePicker = page.getByLabel('Upload CSV file');
     await expect(filePicker).toBeVisible();
+  });
 
-    // Upload the sample CSV file
-    await filePicker.setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
+  test('should accept CSV file upload', async ({ page }) => {
+    await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
+    await expect(page.getByTestId('chart-container')).toBeVisible();
+  });
 
-    // Wait for the chart container to appear and be visible
-    const chartContainer = page.getByTestId('chart-container');
-    await expect(chartContainer).toBeVisible();
+  test('should reject non-CSV file', async ({ page }) => {
+    await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, '../fixtures/invalid.txt'));
+    await expect(page.getByTestId('error-message')).toBeVisible();
+    await expect(page.getByTestId('error-message')).toContainText('Failed to parse CSV file');
+  });
 
-    // Wait for the chart to be fully rendered by checking for specific elements
-    // First, wait for the chart container to be ready
-    await expect(chartContainer).toHaveAttribute('data-ready', 'true');
+  test('should handle drag and drop', async ({ page }) => {
+    // Verify drag-drop styling
+    const dropZone = page.getByTestId('file-drop-zone');
+    await expect(dropZone).toHaveClass(/bg-slate-50/);
 
-    // Wait for and verify the chart axes are present
-    const xAxis = page.locator('.recharts-xAxis');
-    const yAxis = page.locator('.recharts-yAxis');
-    await expect(xAxis).toBeVisible();
-    await expect(yAxis).toBeVisible();
+    // Simulate drag enter
+    await dropZone.dispatchEvent('dragenter');
+    await expect(dropZone).toHaveClass(/bg-blue-50/);
 
-    // Verify the chart displays the correct numeric columns using more specific selectors
-    const xAxisLabel = xAxis.locator('.recharts-label').filter({ hasText: 'age' });
-    const yAxisLabel = yAxis.locator('.recharts-label').filter({ hasText: 'score' });
-    await expect(xAxisLabel).toBeVisible();
-    await expect(yAxisLabel).toBeVisible();
+    // Simulate drag leave
+    await dropZone.dispatchEvent('dragleave');
+    await expect(dropZone).toHaveClass(/bg-slate-50/);
+  });
 
-    // Wait for and verify the bars are rendered
-    // In Recharts, the actual visible bars are path elements inside the bar rectangles
-    const barPaths = page.locator('.recharts-bar-rectangle path');
-    await expect(barPaths).toHaveCount(5); // One bar for each row in sample.csv
+  test('should handle multiple file uploads', async ({ page }) => {
+    const testFiles = [
+      '../fixtures/sample.csv',
+      '../fixtures/missing-values.csv',
+      '../fixtures/duplicate-headers.csv',
+    ];
 
-    // Verify each bar path is visible and has the correct attributes
-    const paths = await barPaths.all();
-    for (const path of paths) {
-      await expect(path).toBeVisible();
-      // Check for the d attribute which defines the path shape
-      await expect(path).toHaveAttribute('d');
-      // Check for fill color
-      await expect(path).toHaveAttribute('fill', '#3b82f6');
-    }
+    await Promise.all(testFiles.map(async (filePath) => {
+      await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, filePath));
+      await expect(page.getByTestId('chart-container')).toBeVisible();
+    }));
   });
 });

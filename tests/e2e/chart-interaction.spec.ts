@@ -81,17 +81,19 @@ test.describe('Chart Interaction Tests', () => {
     const yAxisSelect = page.getByLabel('Y Axis');
 
     // Perform rapid axis changes
-    for (const combination of [
+    const combinations = [
       { x: 'age', y: 'score' },
       { x: 'score', y: 'age' },
-      { x: 'age', y: 'score' }
-    ]) {
+      { x: 'age', y: 'score' },
+    ];
+
+    await Promise.all(combinations.map(async (combination) => {
       await xAxisSelect.selectOption(combination.x);
       await yAxisSelect.selectOption(combination.y);
-    }
+    }));
 
     // Verify chart is still properly rendered
     await expect(page.getByTestId('chart-container')).toBeVisible();
     await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5);
   });
-}); 
+});

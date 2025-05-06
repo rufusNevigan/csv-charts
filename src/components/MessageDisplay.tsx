@@ -6,7 +6,7 @@ export default function MessageDisplay(): JSX.Element | null {
   const { error, warning } = state;
 
   useEffect(() => {
-    console.log('MessageDisplay state:', { error, warning });
+    // Removed console.log for production
   }, [error, warning]);
 
   if (!error && !warning) {
@@ -27,4 +27,4 @@ export default function MessageDisplay(): JSX.Element | null {
       )}
     </div>
   );
-} 
+}

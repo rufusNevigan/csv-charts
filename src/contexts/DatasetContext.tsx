@@ -16,11 +16,9 @@ function datasetReducer(state: DatasetState, action: DatasetAction): DatasetStat
         error: undefined,
         warning: undefined,
       };
-    case 'SET_DATA':
+    case 'SET_DATA': {
       // Check for missing values
-      const hasMissingValues = action.payload.rows.some((row) => 
-        Object.values(row).some((value) => value === '')
-      );
+      const hasMissingValues = action.payload.rows.some((row) => Object.values(row).some((value) => value === ''));
       const warning = hasMissingValues ? 'Warning: Some rows contain missing values' : undefined;
 
       return {
@@ -31,6 +29,7 @@ function datasetReducer(state: DatasetState, action: DatasetAction): DatasetStat
         error: undefined,
         warning,
       };
+    }
     case 'SET_KEYS':
       if (action.payload.xKey === action.payload.yKey) {
         return {
@@ -94,16 +93,11 @@ function DatasetProvider({
       const result = await parseCsv(file);
       dispatch({ type: 'SET_DATA', payload: result });
     } catch (err) {
-      console.log('Error caught in handleFile:', err);
       if (err instanceof InvalidFileError || err instanceof DuplicateHeadersError) {
-        console.log('Handling specific error type:', err.constructor.name);
-        console.log('Error message to be dispatched:', err.message);
         dispatch({ type: 'SET_ERROR', payload: err.message });
       } else if (err instanceof Error) {
-        console.log('Handling generic Error:', err.message);
         dispatch({ type: 'SET_ERROR', payload: err.message });
       } else {
-        console.log('Handling unknown error type');
         dispatch({ type: 'SET_ERROR', payload: 'Failed to parse CSV file' });
       }
     }
