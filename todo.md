@@ -46,7 +46,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 - [x] **4.1** Build `detectNumericColumns` util. <!-- prompt:04-01 -->
 - [x] **4.2** Create `<ChartCanvas>` auto-rendering first two numeric cols. <!-- prompt:04-02 -->
 - [x] **4.3** E2E: upload sample CSV → bars visible. <!-- prompt:04-03 -->
-- [ ] **4.4** Hide canvas when no dataset. <!-- prompt:04-04 -->
+- [x] **4.4** Hide canvas when no dataset. <!-- prompt:04-04 -->
 
 ---
 
