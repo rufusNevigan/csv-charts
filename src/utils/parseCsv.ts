@@ -6,7 +6,8 @@ import {
   DuplicateHeadersError,
 } from './errors';
 
-export type {
+// Re-export error types
+export {
   CsvParseError,
   CsvTooBigError,
   InvalidFileError,

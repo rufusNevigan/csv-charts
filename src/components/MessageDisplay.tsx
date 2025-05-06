@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import useDataset from '../contexts/useDataset';
 
 export default function MessageDisplay(): JSX.Element | null {
