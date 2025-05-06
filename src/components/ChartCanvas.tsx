@@ -14,7 +14,7 @@ import detectNumericColumns from '../utils/detectNumericColumns';
 function ChartCanvas(): JSX.Element {
   const { state, dispatch } = useDataset();
   const {
-    headers, rows, xKey, yKey,
+    headers, rows, xKey, yKey, loading,
   } = state;
 
   // Auto-detect numeric columns if not already set
@@ -26,6 +26,15 @@ function ChartCanvas(): JSX.Element {
       }
     }
   }, [headers, rows, xKey, yKey, dispatch]);
+
+  // If loading, show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" role="status" />
+      </div>
+    );
+  }
 
   // If no dataset is loaded, show a prompt
   if (!headers || !rows || headers.length === 0) {
@@ -71,17 +80,35 @@ function ChartCanvas(): JSX.Element {
             top: 20, right: 30, left: 20, bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey={xKey}
-            label={{ value: xKey, position: 'bottom' }}
+            label={{ value: xKey, position: 'bottom', offset: 0 }}
+            stroke="#6b7280"
+            tick={{ fill: '#4b5563' }}
           />
           <YAxis
             dataKey={yKey}
-            label={{ value: yKey, angle: -90, position: 'left' }}
+            label={{
+              value: yKey, angle: -90, position: 'left', offset: -5,
+            }}
+            stroke="#6b7280"
+            tick={{ fill: '#4b5563' }}
           />
-          <Tooltip />
-          <Bar dataKey={yKey} fill="#8884d8" />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'white',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.375rem',
+              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            }}
+          />
+          <Bar
+            dataKey={yKey}
+            fill="#3b82f6"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={50}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

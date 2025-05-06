@@ -18,6 +18,22 @@ class ResizeObserverMock {
 global.ResizeObserver = ResizeObserverMock;
 
 describe('ChartCanvas', () => {
+  it('shows loading spinner when loading is true', () => {
+    render(
+      <DatasetProvider
+        initialState={{
+          headers: [],
+          rows: [],
+          loading: true,
+        }}
+      >
+        <ChartCanvas />
+      </DatasetProvider>,
+    );
+
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
   it('shows upload prompt when no dataset is loaded', () => {
     render(
       <DatasetProvider
