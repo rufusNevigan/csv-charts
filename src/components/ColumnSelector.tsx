@@ -1,13 +1,28 @@
 import { ChangeEvent } from 'react';
 import useDataset from '../contexts/useDataset';
-import detectNumericColumns from '../utils/detectNumericColumns';
 
 function ColumnSelector(): JSX.Element | null {
   const { state, dispatch } = useDataset();
-  const { headers, xKey, yKey } = state;
+  const {
+    headers,
+    rows,
+    xKey,
+    yKey,
+  } = state;
 
   // Filter out empty headers
   const validHeaders = headers.filter(Boolean);
+
+  // Helper to check if a column is numeric
+  const isNumericColumn = (header: string): boolean => {
+    if (!rows.length) return false;
+    return rows.every((row) => {
+      const value = row[header];
+      if (!value) return false;
+      const num = Number(value);
+      return !Number.isNaN(num) && typeof num === 'number';
+    });
+  };
 
   const handleXAxisChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({
@@ -27,10 +42,8 @@ function ColumnSelector(): JSX.Element | null {
     return null;
   }
 
-  const { xKey: detectedXKey, yKey: detectedYKey } = detectNumericColumns(headers, state.rows);
-  const numericColumns = headers.filter(
-    (header) => detectedXKey === header || detectedYKey === header,
-  );
+  // Get list of numeric columns for Y-axis
+  const numericColumns = validHeaders.filter(isNumericColumn);
 
   return (
     <div className="flex gap-4 mb-4">
@@ -78,6 +91,7 @@ function ColumnSelector(): JSX.Element | null {
               className={numericColumns.includes(header) ? '' : 'text-gray-400'}
             >
               {header}
+              {!numericColumns.includes(header) ? ' (non-numeric)' : ''}
             </option>
           ))}
         </select>

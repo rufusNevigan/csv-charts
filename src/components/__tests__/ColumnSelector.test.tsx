@@ -5,7 +5,10 @@ import DatasetProvider from '../../contexts/DatasetContext';
 describe('ColumnSelector', () => {
   const mockState = {
     headers: ['name', 'age', 'score'],
-    rows: [{ name: 'John', age: '25', score: '95' }],
+    rows: [
+      { name: 'John', age: '25', score: '95' },
+      { name: 'Jane', age: '30', score: '85' },
+    ],
     loading: false,
     error: undefined,
   };
@@ -77,5 +80,41 @@ describe('ColumnSelector', () => {
     // The actual state update will be tested in the context tests
     expect(xAxisDropdown).toHaveValue('age');
     expect(yAxisDropdown).toHaveValue('score');
+  });
+
+  it('disables non-numeric columns in Y-axis dropdown', () => {
+    render(
+      <DatasetProvider initialState={mockState}>
+        <ColumnSelector />
+      </DatasetProvider>,
+    );
+
+    const yAxisDropdown = screen.getByLabelText('Y Axis');
+    const nameOption = yAxisDropdown.querySelector('option[value="name"]') as HTMLOptionElement;
+    const ageOption = yAxisDropdown.querySelector('option[value="age"]') as HTMLOptionElement;
+    const scoreOption = yAxisDropdown.querySelector('option[value="score"]') as HTMLOptionElement;
+
+    expect(nameOption.disabled).toBe(true);
+    expect(ageOption.disabled).toBe(false);
+    expect(scoreOption.disabled).toBe(false);
+
+    expect(nameOption.textContent).toContain('(non-numeric)');
+    expect(ageOption.textContent).not.toContain('(non-numeric)');
+    expect(scoreOption.textContent).not.toContain('(non-numeric)');
+  });
+
+  it('handles empty dataset gracefully', () => {
+    render(
+      <DatasetProvider initialState={{ ...mockState, rows: [] }}>
+        <ColumnSelector />
+      </DatasetProvider>,
+    );
+
+    const yAxisDropdown = screen.getByLabelText('Y Axis');
+    mockState.headers.forEach((header) => {
+      const option = yAxisDropdown.querySelector(`option[value="${header}"]`) as HTMLOptionElement;
+      expect(option.disabled).toBe(true);
+      expect(option.textContent).toContain('(non-numeric)');
+    });
   });
 });
