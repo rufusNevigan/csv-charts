@@ -37,6 +37,14 @@ export default function FilePicker({ onFile, accept = '.csv' }: FilePickerProps)
     }
   }, [handleFile]);
 
+  const handleMouseDown = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -46,16 +54,27 @@ export default function FilePicker({ onFile, accept = '.csv' }: FilePickerProps)
 
   return (
     <div
-      className={`file-picker ${isDragging ? 'dragging' : ''}`}
+      data-testid="file-drop-zone"
+      className={`file-picker ${isDragging ? 'bg-blue-50' : 'bg-slate-50'}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          document.getElementById('file-input')?.click();
+        }
+      }}
+      aria-label="CSV file drop zone"
     >
       <input
         type="file"
         id="file-input"
         data-testid="file-input"
-        aria-label="Upload CSV file"
+        aria-label="Select CSV file"
         accept={accept}
         onChange={handleFileChange}
         className="sr-only"

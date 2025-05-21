@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ChartCanvas from '../components/ChartCanvas';
 import DatasetProvider from '../contexts/DatasetContext';
