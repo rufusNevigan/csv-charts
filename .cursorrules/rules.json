@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "rules": {
+    "pr_creation": {
+      "steps": [
+        {
+          "type": "git_push",
+          "command": "git push --set-upstream origin ${branch_name}"
+        },
+        {
+          "type": "create_pr_body",
+          "template": ".github/pr_template.md",
+          "output": "pr_body.md",
+          "replacements": {
+            "{{SUMMARY}}": "${pr_title}",
+            "{{TASK_ID}}": "${task_id}"
+          }
+        },
+        {
+          "type": "create_pr",
+          "command": "gh pr create --title \"${pr_title}\" --body-file pr_body.md --draft"
+        },
+        {
+          "type": "cleanup",
+          "files": ["pr_body.md"]
+        }
+      ]
+    }
+  },
+  "templates": {
+    "pr_title": "feat(step ${task_id}): ${summary}",
+    "branch_name": "feat/${task_id}-${kebab_summary}"
+  },
+  "validation": {
+    "required_before_pr": [
+      "npm run lint",
+      "npm test",
+      "npm run test:e2e"
+    ]
+  }
+} 
