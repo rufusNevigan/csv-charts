@@ -10,17 +10,17 @@ test.describe('File Upload Tests', () => {
   });
 
   test('should show file picker on page load', async ({ page }) => {
-    const filePicker = page.getByLabel('Upload CSV file');
+    const filePicker = page.getByLabel('Select CSV file');
     await expect(filePicker).toBeVisible();
   });
 
   test('should accept CSV file upload', async ({ page }) => {
-    await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
+    await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
     await expect(page.getByTestId('chart-container')).toBeVisible();
   });
 
   test('should reject non-CSV file', async ({ page }) => {
-    await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, '../fixtures/invalid.txt'));
+    await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/invalid.txt'));
     await expect(page.getByTestId('error-message')).toBeVisible();
     await expect(page.getByTestId('error-message')).toContainText('Failed to parse CSV file');
   });
@@ -47,9 +47,12 @@ test.describe('File Upload Tests', () => {
       '../fixtures/duplicate-headers.csv',
     ];
 
-    await Promise.all(testFiles.map(async (filePath) => {
-      await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, filePath));
+    // Process files sequentially using reduce
+    await testFiles.reduce(async (promise, filePath) => {
+      await promise;
+      await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, filePath));
       await expect(page.getByTestId('chart-container')).toBeVisible();
-    }));
+      await page.waitForTimeout(500);
+    }, Promise.resolve());
   });
 });

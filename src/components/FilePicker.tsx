@@ -68,13 +68,13 @@ export default function FilePicker({ onFile, accept = '.csv' }: FilePickerProps)
           document.getElementById('file-input')?.click();
         }
       }}
-      aria-label="Upload CSV file"
+      aria-label="CSV file drop zone"
     >
       <input
         type="file"
         id="file-input"
         data-testid="file-input"
-        aria-label="Upload CSV file"
+        aria-label="Select CSV file"
         accept={accept}
         onChange={handleFileChange}
         className="sr-only"

@@ -8,7 +8,7 @@ test.describe('Chart Interaction Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     // Upload sample CSV and wait for chart to be ready
-    await page.getByLabel('Upload CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
+    await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
     await expect(page.getByTestId('chart-container')).toBeVisible();
     await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true');
   });
