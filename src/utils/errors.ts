@@ -10,7 +10,9 @@ export class CsvParseError extends Error {
 // Specific error types extending base error
 export class CsvTooBigError extends Error {
   constructor(rowCap: number) {
-    super(`CSV file exceeds maximum row limit of ${rowCap}`);
+    super(
+      `This file contains more than ${rowCap.toLocaleString()} rows. For performance reasons, please use a smaller dataset or filter your data before uploading.`,
+    );
     this.name = 'CsvTooBigError';
   }
 }

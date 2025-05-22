@@ -34,7 +34,7 @@
   color: #64748b;
 }
 
-input[type="file"] {
+input[type='file'] {
   width: 100%;
   max-width: 300px;
   margin-top: 1rem;
@@ -60,4 +60,4 @@ input[type="file"] {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
-} 
+}

@@ -1,8 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-} from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import DatasetProvider from '../DatasetContext';
 import useDataset from '../useDataset';
@@ -33,7 +29,10 @@ function TestComponent() {
       <button
         type="button"
         data-testid="set-keys"
-        onClick={() => dispatch({ type: 'SET_KEYS', payload: { xKey: 'age', yKey: 'score' } })}
+        onClick={() => dispatch({
+          type: 'SET_KEYS',
+          payload: { xKey: 'age', yKey: 'score' },
+        })}
       >
         Set Keys
       </button>
@@ -55,7 +54,9 @@ describe('DatasetContext', () => {
         <TestComponent />
       </DatasetProvider>,
     );
-    expect(screen.getByTestId('state')).toHaveTextContent('{"headers":[],"rows":[],"loading":false}');
+    expect(screen.getByTestId('state')).toHaveTextContent(
+      '{"headers":[],"rows":[],"loading":false}',
+    );
   });
 
   it('handles SET_FILE action', () => {
@@ -65,7 +66,9 @@ describe('DatasetContext', () => {
       </DatasetProvider>,
     );
     fireEvent.click(screen.getByTestId('set-file'));
-    expect(screen.getByTestId('state')).toHaveTextContent('{"headers":[],"rows":[],"loading":true}');
+    expect(screen.getByTestId('state')).toHaveTextContent(
+      '{"headers":[],"rows":[],"loading":true}',
+    );
   });
 
   it('handles SET_FILE_SUCCESS action with duplicate headers', () => {
@@ -84,7 +87,9 @@ describe('DatasetContext', () => {
 
     expect(screen.getByTestId('headers')).toHaveTextContent('name,age,name');
     expect(screen.getByTestId('rows')).toHaveTextContent('1');
-    expect(screen.getByTestId('warning')).toHaveTextContent('Duplicate headers found: name');
+    expect(screen.getByTestId('warning')).toHaveTextContent(
+      'Duplicate headers found: name',
+    );
   });
 
   it('handles SET_FILE_ERROR action', () => {
@@ -94,12 +99,14 @@ describe('DatasetContext', () => {
       </DatasetProvider>,
     );
     fireEvent.click(screen.getByTestId('set-error'));
-    expect(screen.getByTestId('state')).toHaveTextContent(JSON.stringify({
-      headers: [],
-      rows: [],
-      loading: false,
-      error: 'Failed to parse CSV file',
-    }));
+    expect(screen.getByTestId('state')).toHaveTextContent(
+      JSON.stringify({
+        headers: [],
+        rows: [],
+        loading: false,
+        error: 'Failed to parse CSV file',
+      }),
+    );
   });
 
   it('handles SET_KEYS action', () => {
@@ -109,13 +116,15 @@ describe('DatasetContext', () => {
       </DatasetProvider>,
     );
     fireEvent.click(screen.getByTestId('set-keys'));
-    expect(screen.getByTestId('state')).toHaveTextContent(JSON.stringify({
-      headers: [],
-      rows: [],
-      loading: false,
-      xKey: 'age',
-      yKey: 'score',
-    }));
+    expect(screen.getByTestId('state')).toHaveTextContent(
+      JSON.stringify({
+        headers: [],
+        rows: [],
+        loading: false,
+        xKey: 'age',
+        yKey: 'score',
+      }),
+    );
   });
 
   it('handles RESET action', () => {
@@ -134,10 +143,12 @@ describe('DatasetContext', () => {
     );
 
     fireEvent.click(screen.getByTestId('reset'));
-    expect(screen.getByTestId('state')).toHaveTextContent(JSON.stringify({
-      headers: [],
-      rows: [],
-      loading: false,
-    }));
+    expect(screen.getByTestId('state')).toHaveTextContent(
+      JSON.stringify({
+        headers: [],
+        rows: [],
+        loading: false,
+      }),
+    );
   });
 });

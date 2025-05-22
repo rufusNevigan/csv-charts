@@ -16,10 +16,17 @@ describe('parseCsv', () => {
   });
 
   it('throws CsvTooBigError when exceeding row cap', async () => {
-    const content = `name,age\n${Array(50001).fill('John,30').join('\n')}`;
+    const rowCount = 50001;
+    const content = `name,age\n${Array(rowCount).fill('John,30').join('\n')}`;
     const file = createMockFile(content);
 
     await expect(parseCsv(file, 50000)).rejects.toThrow(CsvTooBigError);
+    await expect(parseCsv(file, 50000)).rejects.toThrow(
+      'This file contains more than 50,000 rows',
+    );
+    await expect(parseCsv(file, 50000)).rejects.toThrow(
+      'For performance reasons',
+    );
   });
 
   it('preserves header names exactly', async () => {

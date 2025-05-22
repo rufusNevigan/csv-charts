@@ -1,0 +1,2 @@
+id,name,value
+${Array.from({ length: 50001 }, (_, i) => `${i + 1},Row ${i + 1},${Math.floor(Math.random() * 1000)}`).join('\n')} 

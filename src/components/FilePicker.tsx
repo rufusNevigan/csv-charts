@@ -10,13 +10,16 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
   const [isDragging, setIsDragging] = useState(false);
   const { dispatch } = useDataset();
 
-  const handleFile = useCallback((file: File) => {
-    if (onFile) {
-      onFile(file);
-    } else {
-      dispatch({ type: 'SET_FILE', payload: file });
-    }
-  }, [onFile, dispatch]);
+  const handleFile = useCallback(
+    (file: File) => {
+      if (onFile) {
+        onFile(file);
+      } else {
+        dispatch({ type: 'SET_FILE', payload: file });
+      }
+    },
+    [onFile, dispatch],
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -27,22 +30,28 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
-    if (file && file.type === 'text/csv') {
-      handleFile(file);
-    }
-  }, [handleFile]);
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'text/csv') {
+        handleFile(file);
+      }
+    },
+    [handleFile],
+  );
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFile(file);
-    }
-  }, [handleFile]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        handleFile(file);
+      }
+    },
+    [handleFile],
+  );
 
   return (
     <div

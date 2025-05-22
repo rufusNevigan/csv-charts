@@ -90,9 +90,15 @@ describe('ColumnSelector', () => {
     );
 
     const yAxisDropdown = screen.getByLabelText('Y Axis');
-    const nameOption = yAxisDropdown.querySelector('option[value="name"]') as HTMLOptionElement;
-    const ageOption = yAxisDropdown.querySelector('option[value="age"]') as HTMLOptionElement;
-    const scoreOption = yAxisDropdown.querySelector('option[value="score"]') as HTMLOptionElement;
+    const nameOption = yAxisDropdown.querySelector(
+      'option[value="name"]',
+    ) as HTMLOptionElement;
+    const ageOption = yAxisDropdown.querySelector(
+      'option[value="age"]',
+    ) as HTMLOptionElement;
+    const scoreOption = yAxisDropdown.querySelector(
+      'option[value="score"]',
+    ) as HTMLOptionElement;
 
     expect(nameOption.disabled).toBe(true);
     expect(ageOption.disabled).toBe(false);
@@ -112,7 +118,9 @@ describe('ColumnSelector', () => {
 
     const yAxisDropdown = screen.getByLabelText('Y Axis');
     mockState.headers.forEach((header) => {
-      const option = yAxisDropdown.querySelector(`option[value="${header}"]`) as HTMLOptionElement;
+      const option = yAxisDropdown.querySelector(
+        `option[value="${header}"]`,
+      ) as HTMLOptionElement;
       expect(option.disabled).toBe(true);
       expect(option.textContent).toContain('(non-numeric)');
     });
