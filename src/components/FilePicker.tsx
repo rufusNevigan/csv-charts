@@ -46,10 +46,11 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
 
   return (
     <div
-      className={`file-picker ${isDragging ? 'dragging' : ''}`}
+      className={`file-picker bg-slate-50 ${isDragging ? 'bg-blue-50 dragging' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      data-testid="file-drop-zone"
     >
       <label className="file-picker-label" htmlFor="csv-file">
         <span className="file-picker-text">Select CSV file</span>
@@ -59,7 +60,7 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
           id="csv-file"
           accept=".csv"
           onChange={handleChange}
-          className="hidden"
+          aria-label="Select CSV file"
         />
       </label>
     </div>

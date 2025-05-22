@@ -7,10 +7,12 @@ import useDataset from './contexts/useDataset';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import LoadingOverlay from './components/LoadingOverlay';
 import ResetButton from './components/ResetButton';
+import ErrorMessage from './components/ErrorMessage';
+import WarningMessage from './components/WarningMessage';
 
 function AppContent(): JSX.Element {
   const { state } = useDataset();
-  const { loading } = state;
+  const { loading, error, warning } = state;
 
   return (
     <>
@@ -19,6 +21,8 @@ function AppContent(): JSX.Element {
       <main className="h-screen flex flex-col items-center justify-start bg-slate-100 p-8">
         <h1 className="text-3xl font-semibold mb-8">CSV Charts</h1>
         <FilePicker />
+        {error && <ErrorMessage message={error} />}
+        {warning && <WarningMessage message={warning} />}
         <ColumnSelector />
         <ChartCanvas />
       </main>
