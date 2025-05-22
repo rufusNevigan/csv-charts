@@ -63,7 +63,7 @@ describe('FilePicker', () => {
     if (!dropzone) throw new Error('Dropzone not found');
 
     fireEvent.dragOver(dropzone);
-    expect(dropzone).toHaveClass('dragging');
+    expect(dropzone).toHaveClass('bg-blue-50');
   });
 
   it('hides dragging state when file is dragged out', () => {
@@ -72,9 +72,9 @@ describe('FilePicker', () => {
     if (!dropzone) throw new Error('Dropzone not found');
 
     fireEvent.dragOver(dropzone);
-    expect(dropzone).toHaveClass('dragging');
+    expect(dropzone).toHaveClass('bg-blue-50');
 
     fireEvent.dragLeave(dropzone);
-    expect(dropzone).not.toHaveClass('dragging');
+    expect(dropzone).toHaveClass('bg-slate-50');
   });
 });
