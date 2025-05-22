@@ -31,12 +31,11 @@ test.describe('File Upload Tests', () => {
     await expect(dropZone).toHaveClass(/bg-slate-50/);
 
     // Simulate drag enter
-    await dropZone.hover();
-    await page.mouse.down();
+    await dropZone.dispatchEvent('dragover', {});
     await expect(dropZone).toHaveClass(/bg-blue-50/);
 
     // Simulate drag leave
-    await page.mouse.up();
+    await dropZone.dispatchEvent('dragleave', {});
     await expect(dropZone).toHaveClass(/bg-slate-50/);
   });
 
