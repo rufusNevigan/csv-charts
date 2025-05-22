@@ -46,7 +46,7 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
 
   return (
     <div
-      className={`file-picker bg-slate-50 ${isDragging ? 'bg-blue-50 dragging' : ''}`}
+      className={`file-picker ${isDragging ? 'bg-blue-50' : 'bg-slate-50'}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
