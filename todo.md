@@ -61,7 +61,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 ## Milestone 6 – UX Polish & Robustness
 
-- [ ] **6.1** Add `<AppErrorBoundary>` + `<LoadingOverlay>`. <!-- prompt:06-01 -->
+- [x] **6.1** Add `<AppErrorBoundary>` + `<LoadingOverlay>`. <!-- prompt:06-01 -->
 - [ ] **6.2** Add `<ResetButton>` clearing context. <!-- prompt:06-01 -->
 - [ ] **6.3** Large-file guard (>50 000 rows) with friendly copy. <!-- prompt:06-03 -->
 - [ ] **6.4** Modal error system. <!-- prompt:06-02 -->

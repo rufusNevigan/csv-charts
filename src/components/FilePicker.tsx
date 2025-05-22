@@ -1,90 +1,69 @@
-import React, { useCallback, useState, ChangeEvent } from 'react';
+import React, { useCallback, useState } from 'react';
+import useDataset from '../contexts/useDataset';
+import './FilePicker.css';
 
 interface FilePickerProps {
-  onFile: (file: File) => void;
-  accept?: string;
+  onFile?: (file: File) => void;
 }
 
-export default function FilePicker({ onFile, accept = '.csv' }: FilePickerProps) {
+function FilePicker({ onFile }: FilePickerProps): JSX.Element {
   const [isDragging, setIsDragging] = useState(false);
+  const { dispatch } = useDataset();
 
   const handleFile = useCallback((file: File) => {
-    if (file) {
+    if (onFile) {
       onFile(file);
+    } else {
+      dispatch({ type: 'SET_FILE', payload: file });
     }
-  }, [onFile]);
+  }, [onFile, dispatch]);
 
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    e.stopPropagation();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDragLeave = useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    e.stopPropagation();
     setIsDragging(false);
 
     const file = e.dataTransfer.files[0];
+    if (file && file.type === 'text/csv') {
+      handleFile(file);
+    }
+  }, [handleFile]);
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       handleFile(file);
     }
   }, [handleFile]);
 
-  const handleMouseDown = useCallback(() => {
-    setIsDragging(true);
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFile(file);
-    }
-  };
-
   return (
     <div
-      data-testid="file-drop-zone"
-      className={`file-picker ${isDragging ? 'bg-blue-50' : 'bg-slate-50'}`}
+      className={`file-picker ${isDragging ? 'dragging' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          document.getElementById('file-input')?.click();
-        }
-      }}
-      aria-label="CSV file drop zone"
     >
-      <input
-        type="file"
-        id="file-input"
-        data-testid="file-input"
-        aria-label="Select CSV file"
-        accept={accept}
-        onChange={handleFileChange}
-        className="sr-only"
-      />
-      <label htmlFor="file-input" className="file-picker-label">
-        <span className="file-picker-text">
-          Upload CSV file
-        </span>
-        <span className="file-picker-hint">CSV files only</span>
+      <label className="file-picker-label" htmlFor="csv-file">
+        <span className="file-picker-text">Select CSV file</span>
+        <span className="file-picker-hint">or drag and drop here</span>
+        <input
+          type="file"
+          id="csv-file"
+          accept=".csv"
+          onChange={handleChange}
+          className="hidden"
+        />
       </label>
     </div>
   );
 }
+
+export default FilePicker;

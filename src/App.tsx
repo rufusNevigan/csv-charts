@@ -1,25 +1,40 @@
-import useDataset from './contexts/useDataset';
+import React from 'react';
+import './App.css';
 import FilePicker from './components/FilePicker';
 import ChartCanvas from './components/ChartCanvas';
 import ColumnSelector from './components/ColumnSelector';
-import MessageDisplay from './components/MessageDisplay';
-import './App.css';
-import './components/FilePicker.css';
+import DatasetProvider from './contexts/DatasetContext';
+import useDataset from './contexts/useDataset';
+import AppErrorBoundary from './components/AppErrorBoundary';
+import LoadingOverlay from './components/LoadingOverlay';
+import ResetButton from './components/ResetButton';
 
-export default function App() {
-  const { dispatch } = useDataset();
+function AppContent(): JSX.Element {
+  const { state } = useDataset();
+  const { loading } = state;
 
   return (
-    <main className="min-h-screen p-8 bg-slate-50">
-      <h1 className="text-3xl font-semibold text-center mb-8">CSV Charts</h1>
-      <div className="max-w-4xl mx-auto">
-        <FilePicker onFile={(file) => dispatch({ type: 'SET_FILE', payload: file })} />
-        <MessageDisplay />
+    <>
+      <LoadingOverlay show={loading} />
+      <ResetButton />
+      <main className="h-screen flex flex-col items-center justify-start bg-slate-100 p-8">
+        <h1 className="text-3xl font-semibold mb-8">CSV Charts</h1>
+        <FilePicker />
         <ColumnSelector />
-        <div className="mt-8 bg-white p-6 rounded-lg shadow-lg min-h-[500px] relative">
-          <ChartCanvas />
-        </div>
-      </div>
-    </main>
+        <ChartCanvas />
+      </main>
+    </>
   );
 }
+
+function App(): JSX.Element {
+  return (
+    <AppErrorBoundary>
+      <DatasetProvider>
+        <AppContent />
+      </DatasetProvider>
+    </AppErrorBoundary>
+  );
+}
+
+export default App;
