@@ -5,7 +5,7 @@ import {
   useMemo,
 } from 'react';
 import { parseCsv, InvalidFileError, DuplicateHeadersError } from '../utils/parseCsv';
-import { info, error } from '../utils/logger';
+import { info, error as logError } from '../utils/logger';
 import { DatasetState, DatasetAction, initialState } from './datasetTypes';
 import DatasetContext from './DatasetContextDefinition';
 
@@ -33,30 +33,28 @@ function datasetReducer(state: DatasetState, action: DatasetAction): DatasetStat
         warning,
       };
     }
-    case 'SET_KEYS':
-      if (action.payload.xKey === action.payload.yKey) {
-        return {
-          ...state,
-          error: 'X and Y axes must be different columns',
-        };
-      }
+    case 'SET_KEYS': {
       info('Chart keys updated', {
         xKey: action.payload.xKey,
         yKey: action.payload.yKey,
       });
+      const errorMessage = action.payload.xKey === action.payload.yKey
+        ? 'X and Y axes must be different columns'
+        : undefined;
       return {
         ...state,
         xKey: action.payload.xKey,
         yKey: action.payload.yKey,
-        error: undefined,
+        error: errorMessage,
       };
+    }
     case 'SET_LOADING':
       return {
         ...state,
         loading: action.payload,
       };
     case 'SET_ERROR':
-      error('CSV parsing failed', { error: action.payload });
+      logError('CSV parsing failed', { error: action.payload });
       return {
         ...state,
         error: action.payload,
