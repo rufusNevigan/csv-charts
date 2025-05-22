@@ -54,7 +54,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 - [x] **5.1** Add `<ColumnSelector>` (X & Y dropdowns, skip empty headers). <!-- prompt:05-01 -->
 - [x] **5.2** Disable Y options if non-numeric. <!-- prompt:05-02 -->
-- [ ] **5.3** Wire selections into context reducer. <!-- prompt:05-03 -->
+- [x] **5.3** Wire selections into context reducer. <!-- prompt:05-03 -->
 - [ ] **5.4** RTL test: dropdown change updates chart. <!-- prompt:05-04 -->
 
 ---
