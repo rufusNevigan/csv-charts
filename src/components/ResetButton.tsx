@@ -1,4 +1,3 @@
-import React from 'react';
 import useDataset from '../contexts/useDataset';
 
 function ResetButton(): JSX.Element {

@@ -1,4 +1,3 @@
-import React from 'react';
 import './App.css';
 import FilePicker from './components/FilePicker';
 import ChartCanvas from './components/ChartCanvas';
