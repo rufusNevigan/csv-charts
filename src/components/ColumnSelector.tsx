@@ -4,10 +4,7 @@ import useDataset from '../contexts/useDataset';
 function ColumnSelector(): JSX.Element | null {
   const { state, dispatch } = useDataset();
   const {
-    headers,
-    rows,
-    xKey,
-    yKey,
+    headers, rows, xKey, yKey,
   } = state;
 
   // Filter out empty headers

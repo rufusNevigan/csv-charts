@@ -2,61 +2,81 @@ import { describe, it, expect } from 'vitest';
 import detectNumericColumns from '../utils/detectNumericColumns';
 
 describe('detectNumericColumns', () => {
-  it('detects numeric columns in a dataset', () => {
+  it('identifies numeric columns correctly', () => {
+    const headers = ['name', 'age', 'score', 'city'];
+    const rows = [
+      {
+        name: 'John',
+        age: '30',
+        score: '95',
+        city: 'NY',
+      },
+      {
+        name: 'Jane',
+        age: '25',
+        score: '88',
+        city: 'LA',
+      },
+    ];
+
+    const numericColumns = detectNumericColumns(rows, headers);
+    expect(numericColumns).toEqual(['age', 'score']);
+  });
+
+  it('handles empty values', () => {
     const headers = ['name', 'age', 'score'];
     const rows = [
-      { name: 'Alice', age: '25', score: '85' },
-      { name: 'Bob', age: '30', score: '92' },
-      { name: 'Charlie', age: '28', score: '78' },
+      {
+        name: 'John',
+        age: '30',
+        score: '',
+      },
+      {
+        name: 'Jane',
+        age: '25',
+        score: '88',
+      },
     ];
 
-    const result = detectNumericColumns(headers, rows);
-    expect(result).toEqual({
-      xKey: 'age',
-      yKey: 'score',
-    });
+    const numericColumns = detectNumericColumns(rows, headers);
+    expect(numericColumns).toEqual(['age']);
   });
 
-  it('handles empty headers', () => {
-    const headers = ['', 'age', 'score'];
+  it('handles non-numeric strings', () => {
+    const headers = ['name', 'age', 'score'];
     const rows = [
-      { '': 'Alice', age: '25', score: '85' },
-      { '': 'Bob', age: '30', score: '92' },
+      {
+        name: 'John',
+        age: '30',
+        score: 'A+',
+      },
+      {
+        name: 'Jane',
+        age: '25',
+        score: 'B-',
+      },
     ];
 
-    const result = detectNumericColumns(headers, rows);
-    expect(result).toEqual({
-      xKey: 'age',
-      yKey: 'score',
-    });
+    const numericColumns = detectNumericColumns(rows, headers);
+    expect(numericColumns).toEqual(['age']);
   });
 
-  it('returns undefined for non-numeric columns', () => {
-    const headers = ['name', 'email'];
+  it('returns empty array when no numeric columns found', () => {
+    const headers = ['name', 'city', 'grade'];
     const rows = [
-      { name: 'Alice', email: 'alice@example.com' },
-      { name: 'Bob', email: 'bob@example.com' },
+      {
+        name: 'John',
+        city: 'NY',
+        grade: 'A',
+      },
+      {
+        name: 'Jane',
+        city: 'LA',
+        grade: 'B',
+      },
     ];
 
-    const result = detectNumericColumns(headers, rows);
-    expect(result).toEqual({
-      xKey: undefined,
-      yKey: undefined,
-    });
-  });
-
-  it('handles mixed numeric and non-numeric values', () => {
-    const headers = ['id', 'value'];
-    const rows = [
-      { id: '1', value: '100' },
-      { id: '2', value: 'invalid' },
-      { id: '3', value: '200' },
-    ];
-
-    const result = detectNumericColumns(headers, rows);
-    expect(result).toEqual({
-      xKey: 'id',
-      yKey: undefined,
-    });
+    const numericColumns = detectNumericColumns(rows, headers);
+    expect(numericColumns).toEqual([]);
   });
 });

@@ -18,13 +18,16 @@ function ChartCanvas(): JSX.Element {
   } = state;
   const [isChartReady, setIsChartReady] = useState(false);
 
-  // Auto-detect numeric columns if not already set
   useEffect(() => {
-    if (headers && rows && !xKey && !yKey) {
-      const { xKey: detectedXKey, yKey: detectedYKey } = detectNumericColumns(headers, rows);
-      if (detectedXKey && detectedYKey) {
-        dispatch({ type: 'SET_KEYS', payload: { xKey: detectedXKey, yKey: detectedYKey } });
-      }
+    if (!headers?.length || !rows?.length) return;
+
+    // Find numeric columns
+    const numericCols = detectNumericColumns(rows, headers);
+    if (numericCols.length >= 2 && !xKey && !yKey) {
+      dispatch({
+        type: 'SET_KEYS',
+        payload: { xKey: numericCols[0], yKey: numericCols[1] },
+      });
     }
   }, [headers, rows, xKey, yKey, dispatch]);
 
@@ -41,7 +44,10 @@ function ChartCanvas(): JSX.Element {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" role="status" />
+        <div
+          className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"
+          role="status"
+        />
       </div>
     );
   }
@@ -49,25 +55,34 @@ function ChartCanvas(): JSX.Element {
   // If no dataset is loaded, show a prompt
   if (!headers || !rows || headers.length === 0) {
     return (
-      <div className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200">
-        <p className="text-gray-500">Upload a CSV file to visualize data</p>
+      <div className="text-center text-gray-500 mt-8">
+        Upload a CSV file to visualize data
       </div>
     );
   }
 
-  // If no numeric columns are detected, show a message
+  const numericColumns = detectNumericColumns(rows, headers);
+  if (numericColumns.length < 2) {
+    return (
+      <div className="text-center text-gray-500 mt-8">
+        No numeric columns found in the dataset
+      </div>
+    );
+  }
+
   if (!xKey || !yKey) {
     return (
-      <div className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200">
-        <p className="text-gray-500">No numeric columns found in the dataset</p>
+      <div className="text-center text-gray-500 mt-8">
+        Select columns to visualize
       </div>
     );
   }
 
-  // Convert string values to numbers for the chart
-  const chartData = rows.map((row: Record<string, string>) => ({
-    [xKey]: Number(row[xKey]),
-    [yKey]: Number(row[yKey]),
+  // Only render chart when we have valid data and column selections
+  const chartData = rows.map((row) => ({
+    ...row,
+    [xKey]: row[xKey] || '',
+    [yKey]: row[yKey] || '',
   }));
 
   return (
@@ -88,7 +103,10 @@ function ChartCanvas(): JSX.Element {
         <BarChart
           data={chartData}
           margin={{
-            top: 20, right: 30, left: 20, bottom: 5,
+            top: 20,
+            right: 30,
+            left: 20,
+            bottom: 5,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -101,7 +119,10 @@ function ChartCanvas(): JSX.Element {
           <YAxis
             dataKey={yKey}
             label={{
-              value: yKey, angle: -90, position: 'left', offset: -5,
+              value: yKey,
+              angle: -90,
+              position: 'left',
+              offset: -5,
             }}
             stroke="#6b7280"
             tick={{ fill: '#4b5563' }}

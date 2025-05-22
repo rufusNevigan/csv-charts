@@ -37,7 +37,8 @@ export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
           return;
         }
 
-        if (results.data.length > rowCap + 1) { // +1 for header row
+        if (results.data.length > rowCap + 1) {
+          // +1 for header row
           reject(new CsvTooBigError(rowCap));
           return;
         }
@@ -56,7 +57,9 @@ export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
 
         if (duplicateHeaders.length > 0) {
           // For each duplicate header, add it twice to match the actual occurrences
-          const duplicateMessage = duplicateHeaders.map((header) => [header, header]).flat();
+          const duplicateMessage = duplicateHeaders
+            .map((header) => [header, header])
+            .flat();
           reject(new DuplicateHeadersError(duplicateMessage));
           return;
         }

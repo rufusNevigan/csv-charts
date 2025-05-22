@@ -46,7 +46,9 @@ describe('ChartCanvas', () => {
       </DatasetProvider>,
     );
 
-    expect(screen.getByText('Upload a CSV file to visualize data')).toBeInTheDocument();
+    expect(
+      screen.getByText('Upload a CSV file to visualize data'),
+    ).toBeInTheDocument();
   });
 
   it('shows message when no numeric columns are detected', () => {
@@ -62,7 +64,9 @@ describe('ChartCanvas', () => {
       </DatasetProvider>,
     );
 
-    expect(screen.getByText('No numeric columns found in the dataset')).toBeInTheDocument();
+    expect(
+      screen.getByText('No numeric columns found in the dataset'),
+    ).toBeInTheDocument();
   });
 
   it('renders chart when numeric columns are detected', () => {

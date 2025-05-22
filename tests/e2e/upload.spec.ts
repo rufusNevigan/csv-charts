@@ -54,4 +54,35 @@ test.describe('File Upload Tests', () => {
       await page.waitForTimeout(500);
     }, Promise.resolve());
   });
+
+  test('should show friendly error for large files', async ({ page }) => {
+    // Create a large CSV file programmatically
+    const rows = ['id,name,value'];
+    for (let i = 0; i < 50001; i += 1) {
+      rows.push(`${i + 1},Row ${i + 1},${Math.floor(Math.random() * 1000)}`);
+    }
+    const csvContent = rows.join('\n');
+
+    // Upload the large CSV content directly
+    await page.evaluate(async (content) => {
+      const blob = new Blob([content], { type: 'text/csv' });
+      const file = new File([blob], 'large.csv', { type: 'text/csv' });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      const input = document.querySelector('input[type="file"]');
+      if (input) {
+        Object.defineProperty(input, 'files', {
+          value: dataTransfer.files,
+          writable: false,
+        });
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }, csvContent);
+
+    // Wait for error message and verify content
+    const errorMessage = page.getByTestId('error-message');
+    await expect(errorMessage).toBeVisible({ timeout: 10000 });
+    await expect(errorMessage).toContainText('more than 50,000 rows');
+    await expect(errorMessage).toContainText('For performance reasons');
+  });
 });
