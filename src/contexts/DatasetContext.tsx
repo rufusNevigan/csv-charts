@@ -18,10 +18,8 @@ function datasetReducer(
     case 'SET_FILE':
       info('File selected for parsing', { filename: action.payload.name });
       return {
-        ...state,
+        ...initialState, // Reset to initial state when new file is selected
         loading: true,
-        error: undefined,
-        warning: undefined,
       };
     case 'SET_DATA': {
       // Check for missing values
@@ -30,6 +28,18 @@ function datasetReducer(
         ? 'Warning: Some rows contain missing values'
         : undefined;
 
+      // Find numeric columns and set initial x/y keys
+      const numericColumns = action.payload.rows.length > 0
+        ? action.payload.headers.filter((header) => action.payload.rows.every((row) => {
+          const value = row[header];
+          if (!value) return false;
+          const num = Number(value);
+          return !Number.isNaN(num) && typeof num === 'number';
+        }))
+        : [];
+
+      const [firstNumeric, secondNumeric] = numericColumns;
+
       return {
         ...state,
         headers: action.payload.headers,
@@ -37,6 +47,11 @@ function datasetReducer(
         loading: false,
         error: undefined,
         warning,
+        // Set initial x/y keys if we have numeric columns
+        ...(numericColumns.length >= 2 && {
+          xKey: firstNumeric,
+          yKey: secondNumeric,
+        }),
       };
     }
     case 'SET_KEYS': {

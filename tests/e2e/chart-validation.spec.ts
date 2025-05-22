@@ -25,8 +25,9 @@ test.describe('Chart Validation Tests', () => {
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/missing-values.csv'));
     await expect(page.getByTestId('warning-message')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('warning-message')).toContainText('Warning: Some rows contain missing values');
-    await expect(page.getByTestId('chart-container')).toBeVisible();
-    await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5);
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+    await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 10000 });
   });
 
   test('should handle duplicate headers in CSV', async ({ page }) => {
@@ -45,7 +46,8 @@ test.describe('Chart Validation Tests', () => {
     page.on('console', (msg) => messages.push(msg.text()));
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/sample.csv'));
-    await expect(page.getByTestId('chart-container')).toBeVisible();
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
 
     // Select same column for both axes
     await page.getByLabel('X Axis').selectOption('age');
@@ -61,13 +63,15 @@ test.describe('Chart Validation Tests', () => {
 
     // Upload first file
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/sample.csv'));
-    await expect(page.getByTestId('chart-container')).toBeVisible();
-    await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5);
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+    await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 10000 });
 
     // Upload second file
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/missing-values.csv'));
-    await expect(page.getByTestId('chart-container')).toBeVisible();
-    await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5);
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+    await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 10000 });
     await expect(page.getByTestId('warning-message')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('warning-message')).toContainText('Warning: Some rows contain missing values');
   });

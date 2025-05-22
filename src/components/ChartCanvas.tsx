@@ -18,6 +18,7 @@ function ChartCanvas(): JSX.Element {
   } = state;
   const [isChartReady, setIsChartReady] = useState(false);
 
+  // Effect to auto-select numeric columns when data is loaded
   useEffect(() => {
     if (!headers?.length || !rows?.length) return;
 
@@ -29,21 +30,24 @@ function ChartCanvas(): JSX.Element {
         payload: { xKey: numericCols[0], yKey: numericCols[1] },
       });
     }
-  }, [headers, rows, xKey, yKey, dispatch]);
+  }, [headers, rows, dispatch, xKey, yKey]);
 
   // Set chart ready state when data is available
   useEffect(() => {
-    if (headers && rows && xKey && yKey && !loading) {
-      setIsChartReady(true);
-    } else {
-      setIsChartReady(false);
-    }
+    const numericCols = headers && rows ? detectNumericColumns(rows, headers) : [];
+    const hasValidData = headers && rows && xKey && yKey && !loading;
+    const hasNumericColumns = numericCols.length >= 2;
+    setIsChartReady(Boolean(hasValidData && hasNumericColumns));
   }, [headers, rows, xKey, yKey, loading]);
 
   // If loading, show loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200">
+      <div
+        data-testid="chart-container"
+        data-ready="false"
+        className="flex items-center justify-center h-96 w-full bg-gray-50 rounded-lg border border-gray-200"
+      >
         <div
           className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"
           role="status"
@@ -55,7 +59,11 @@ function ChartCanvas(): JSX.Element {
   // If no dataset is loaded, show a prompt
   if (!headers || !rows || headers.length === 0) {
     return (
-      <div className="text-center text-gray-500 mt-8">
+      <div
+        data-testid="chart-container"
+        data-ready="false"
+        className="text-center text-gray-500 mt-8"
+      >
         Upload a CSV file to visualize data
       </div>
     );
@@ -64,7 +72,11 @@ function ChartCanvas(): JSX.Element {
   const numericColumns = detectNumericColumns(rows, headers);
   if (numericColumns.length < 2) {
     return (
-      <div className="text-center text-gray-500 mt-8">
+      <div
+        data-testid="chart-container"
+        data-ready="false"
+        className="text-center text-gray-500 mt-8"
+      >
         No numeric columns found in the dataset
       </div>
     );
@@ -72,29 +84,32 @@ function ChartCanvas(): JSX.Element {
 
   if (!xKey || !yKey) {
     return (
-      <div className="text-center text-gray-500 mt-8">
+      <div
+        data-testid="chart-container"
+        data-ready="false"
+        className="text-center text-gray-500 mt-8"
+      >
         Select columns to visualize
       </div>
     );
   }
 
-  // Only render chart when we have valid data and column selections
+  // Convert values to numbers, using 0 for missing values
   const chartData = rows.map((row) => ({
     ...row,
-    [xKey]: row[xKey] || '',
-    [yKey]: row[yKey] || '',
+    [xKey]: row[xKey] === '' ? 0 : Number(row[xKey]),
+    [yKey]: row[yKey] === '' ? 0 : Number(row[yKey]),
   }));
 
   return (
     <div
       className="block relative h-96 w-full"
       data-testid="chart-container"
-      data-ready={isChartReady}
+      data-ready={isChartReady.toString()}
       style={{
         width: '100%',
         height: '400px',
         minHeight: '400px',
-        visibility: 'visible',
         display: 'block',
         position: 'relative',
       }}

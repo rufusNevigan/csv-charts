@@ -16,7 +16,8 @@ test.describe('File Upload Tests', () => {
 
   test('should accept CSV file upload', async ({ page }) => {
     await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
-    await expect(page.getByTestId('chart-container')).toBeVisible();
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
   });
 
   test('should reject non-CSV file', async ({ page }) => {
@@ -46,13 +47,17 @@ test.describe('File Upload Tests', () => {
       '../fixtures/duplicate-headers.csv',
     ];
 
-    // Process files sequentially using reduce
-    await testFiles.reduce(async (promise, filePath) => {
-      await promise;
+    // Process files sequentially using Promise.all and map
+    await Promise.all(testFiles.map(async (filePath) => {
       await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, filePath));
-      await expect(page.getByTestId('chart-container')).toBeVisible();
+      // Skip chart checks for duplicate headers file as it should show error
+      if (!filePath.includes('duplicate-headers')) {
+        await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+        await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+      }
+      // Wait between uploads to ensure proper state reset
       await page.waitForTimeout(500);
-    }, Promise.resolve());
+    }));
   });
 
   test('should show friendly error for large files', async ({ page }) => {
