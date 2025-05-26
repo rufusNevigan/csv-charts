@@ -23,7 +23,7 @@ describe('detectNumericColumns', () => {
     expect(numericColumns).toEqual(['age', 'score']);
   });
 
-  it('handles empty values', () => {
+  it('considers columns with empty values numeric if all non-empty values are numeric', () => {
     const headers = ['name', 'age', 'score'];
     const rows = [
       {
@@ -39,7 +39,7 @@ describe('detectNumericColumns', () => {
     ];
 
     const numericColumns = detectNumericColumns(rows, headers);
-    expect(numericColumns).toEqual(['age']);
+    expect(numericColumns).toEqual(['age', 'score']);
   });
 
   it('handles non-numeric strings', () => {

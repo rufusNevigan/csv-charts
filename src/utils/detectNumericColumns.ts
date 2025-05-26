@@ -1,7 +1,7 @@
 /**
  * Detects which columns in a dataset contain only numeric values.
- * Empty values are not allowed - a column must have all values be numeric
- * to be considered a numeric column.
+ * Empty values are allowed - a column is considered numeric if all
+ * non-empty values are numeric.
  * @param rows - Array of objects representing CSV rows
  * @param headers - Array of column header names
  * @returns Array of headers that contain only numeric values
@@ -21,11 +21,8 @@ function detectNumericColumns(
       // If already marked as non-numeric, skip
       if (!numericColumns.get(header)) return;
 
-      // Empty values disqualify a column from being numeric
-      if (value === '') {
-        numericColumns.set(header, false);
-        return;
-      }
+      // Skip empty values
+      if (value === '') return;
 
       // Check if value is numeric
       const isNumeric = !Number.isNaN(Number(value));
