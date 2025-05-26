@@ -1,28 +1,44 @@
 import {
-  useReducer,
-  ReactNode,
-  useCallback,
-  useMemo,
+  useReducer, ReactNode, useCallback, useMemo,
 } from 'react';
-import { parseCsv, InvalidFileError, DuplicateHeadersError } from '../utils/parseCsv';
+import {
+  parseCsv,
+  InvalidFileError,
+  DuplicateHeadersError,
+} from '../utils/parseCsv';
 import { info, error as logError } from '../utils/logger';
 import { DatasetState, DatasetAction, initialState } from './datasetTypes';
 import DatasetContext from './DatasetContextDefinition';
 
-function datasetReducer(state: DatasetState, action: DatasetAction): DatasetState {
+function datasetReducer(
+  state: DatasetState,
+  action: DatasetAction,
+): DatasetState {
   switch (action.type) {
     case 'SET_FILE':
       info('File selected for parsing', { filename: action.payload.name });
       return {
-        ...state,
+        ...initialState, // Reset to initial state when new file is selected
         loading: true,
-        error: undefined,
-        warning: undefined,
       };
     case 'SET_DATA': {
       // Check for missing values
       const hasMissingValues = action.payload.rows.some((row) => Object.values(row).some((value) => value === ''));
-      const warning = hasMissingValues ? 'Warning: Some rows contain missing values' : undefined;
+      const warning = hasMissingValues
+        ? 'Warning: Some rows contain missing values'
+        : undefined;
+
+      // Find numeric columns and set initial x/y keys
+      const numericColumns = action.payload.rows.length > 0
+        ? action.payload.headers.filter((header) => action.payload.rows.every((row) => {
+          const value = row[header];
+          if (!value) return false;
+          const num = Number(value);
+          return !Number.isNaN(num) && typeof num === 'number';
+        }))
+        : [];
+
+      const [firstNumeric, secondNumeric] = numericColumns;
 
       return {
         ...state,
@@ -31,6 +47,11 @@ function datasetReducer(state: DatasetState, action: DatasetAction): DatasetStat
         loading: false,
         error: undefined,
         warning,
+        // Set initial x/y keys if we have numeric columns
+        ...(numericColumns.length >= 2 && {
+          xKey: firstNumeric,
+          yKey: secondNumeric,
+        }),
       };
     }
     case 'SET_KEYS': {
@@ -94,7 +115,10 @@ function DatasetProvider({
       const result = await parseCsv(file);
       dispatch({ type: 'SET_DATA', payload: result });
     } catch (err) {
-      if (err instanceof InvalidFileError || err instanceof DuplicateHeadersError) {
+      if (
+        err instanceof InvalidFileError
+        || err instanceof DuplicateHeadersError
+      ) {
         dispatch({ type: 'SET_ERROR', payload: err.message });
       } else if (err instanceof Error) {
         dispatch({ type: 'SET_ERROR', payload: err.message });
@@ -104,23 +128,27 @@ function DatasetProvider({
     }
   }, []);
 
-  const contextDispatch = useCallback((action: DatasetAction) => {
-    if (action.type === 'SET_FILE') {
-      handleFile(action.payload);
-    } else {
-      dispatch(action);
-    }
-  }, [handleFile]);
+  const contextDispatch = useCallback(
+    (action: DatasetAction) => {
+      if (action.type === 'SET_FILE') {
+        handleFile(action.payload);
+      } else {
+        dispatch(action);
+      }
+    },
+    [handleFile],
+  );
 
-  const value = useMemo(() => ({
-    state,
-    dispatch: contextDispatch,
-  }), [state, contextDispatch]);
+  const value = useMemo(
+    () => ({
+      state,
+      dispatch: contextDispatch,
+    }),
+    [state, contextDispatch],
+  );
 
   return (
-    <DatasetContext.Provider value={value}>
-      {children}
-    </DatasetContext.Provider>
+    <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>
   );
 }
 

@@ -1,16 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import {
-  vi,
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  expect,
+  vi, describe, it, beforeAll, afterAll, expect,
 } from 'vitest';
 import AppErrorBoundary from '../AppErrorBoundary';
 
 // Mock console.error to avoid test output noise
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+const mockConsoleError = vi
+  .spyOn(console, 'error')
+  .mockImplementation(() => {});
 
 beforeAll(() => {
   // Console is already mocked above

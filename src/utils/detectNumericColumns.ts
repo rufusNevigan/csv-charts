@@ -1,33 +1,41 @@
-interface NumericColumns {
-  xKey?: string;
-  yKey?: string;
-}
-
 /**
- * Detects the first two numeric columns in a dataset.
- * Returns undefined for xKey/yKey if no numeric columns are found.
+ * Detects which columns in a dataset contain only numeric values.
+ * Empty values are allowed - a column is considered numeric if all
+ * non-empty values are numeric.
+ * @param rows - Array of objects representing CSV rows
+ * @param headers - Array of column header names
+ * @returns Array of headers that contain only numeric values
  */
 function detectNumericColumns(
-  headers: string[],
   rows: Record<string, string>[],
-): NumericColumns {
-  if (!headers?.length || !rows?.length) {
-    return {};
-  }
+  headers: string[],
+): string[] {
+  // Track columns that are numeric
+  const numericColumns = new Map<string, boolean>();
+  headers.forEach((header) => numericColumns.set(header, true));
 
-  const isNumeric = (value: string) => {
-    const num = Number(value);
-    return !Number.isNaN(num) && typeof num === 'number';
-  };
+  // Check each row's values
+  rows.forEach((row) => {
+    headers.forEach((header) => {
+      const value = row[header];
+      // If already marked as non-numeric, skip
+      if (!numericColumns.get(header)) return;
 
-  // Check first 10 rows to determine if a column is numeric
-  const sampleRows = rows.slice(0, 10);
-  const numericColumns = headers.filter((header) => (
-    sampleRows.every((row) => isNumeric(row[header]))
-  ));
+      // Skip empty values
+      if (value === '') return;
 
-  const [xKey, yKey] = numericColumns;
-  return { xKey, yKey };
+      // Check if value is numeric
+      const isNumeric = !Number.isNaN(Number(value));
+      if (!isNumeric) {
+        numericColumns.set(header, false);
+      }
+    });
+  });
+
+  // Return headers that are numeric
+  return headers.filter(
+    (header) => numericColumns.get(header),
+  );
 }
 
 export default detectNumericColumns;

@@ -1,10 +1,5 @@
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts';
 
 const data = [
@@ -15,7 +10,10 @@ const data = [
 
 export default function SampleBarChart() {
   return (
-    <div data-testid="chart-container" style={{ width: '100%', height: '400px', minWidth: '300px' }}>
+    <div
+      data-testid="chart-container"
+      style={{ width: '100%', height: '400px', minWidth: '300px' }}
+    >
       <BarChart data={data} width={500} height={300}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />

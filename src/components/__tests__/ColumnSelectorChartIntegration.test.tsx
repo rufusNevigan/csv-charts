@@ -1,9 +1,6 @@
 import { vi } from 'vitest';
 import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
+  render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
 import DatasetProvider from '../../contexts/DatasetContext';
 import ColumnSelector from '../ColumnSelector';
@@ -115,7 +112,9 @@ describe('ColumnSelector and ChartCanvas Integration', () => {
 
     // Should show error message
     await waitFor(() => {
-      expect(screen.getByText('X and Y axes must be different columns')).toBeInTheDocument();
+      expect(
+        screen.getByText('X and Y axes must be different columns'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -131,9 +130,15 @@ describe('ColumnSelector and ChartCanvas Integration', () => {
     const yAxisSelect = screen.getByLabelText('Y Axis');
 
     // Check that non-numeric columns are disabled
-    const nameOption = yAxisSelect.querySelector('option[value="name"]') as HTMLOptionElement;
-    const gradeOption = yAxisSelect.querySelector('option[value="grade"]') as HTMLOptionElement;
-    const scoreOption = yAxisSelect.querySelector('option[value="score"]') as HTMLOptionElement;
+    const nameOption = yAxisSelect.querySelector(
+      'option[value="name"]',
+    ) as HTMLOptionElement;
+    const gradeOption = yAxisSelect.querySelector(
+      'option[value="grade"]',
+    ) as HTMLOptionElement;
+    const scoreOption = yAxisSelect.querySelector(
+      'option[value="score"]',
+    ) as HTMLOptionElement;
 
     expect(nameOption.disabled).toBe(true);
     expect(gradeOption.disabled).toBe(true);
