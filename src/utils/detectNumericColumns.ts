@@ -10,9 +10,13 @@ function detectNumericColumns(
   rows: Record<string, string>[],
   headers: string[],
 ): string[] {
-  // Track columns that are numeric
+  // Track columns that are numeric and have at least one non-empty value
   const numericColumns = new Map<string, boolean>();
-  headers.forEach((header) => numericColumns.set(header, true));
+  const hasNonEmptyValue = new Map<string, boolean>();
+  headers.forEach((header) => {
+    numericColumns.set(header, true);
+    hasNonEmptyValue.set(header, false);
+  });
 
   // Check each row's values
   rows.forEach((row) => {
@@ -22,19 +26,23 @@ function detectNumericColumns(
       if (!numericColumns.get(header)) return;
 
       // Skip empty values
-      if (value === '') return;
+      if (value === undefined || value === null || value === '') return;
+
+      // Mark as having a non-empty value
+      hasNonEmptyValue.set(header, true);
 
       // Check if value is numeric
-      const isNumeric = !Number.isNaN(Number(value));
+      const num = Number(value);
+      const isNumeric = !Number.isNaN(num) && typeof num === 'number' && value.trim() !== '';
       if (!isNumeric) {
         numericColumns.set(header, false);
       }
     });
   });
 
-  // Return headers that are numeric
+  // Return headers that are numeric and have at least one non-empty value
   return headers.filter(
-    (header) => numericColumns.get(header),
+    (header) => numericColumns.get(header) && hasNonEmptyValue.get(header),
   );
 }
 

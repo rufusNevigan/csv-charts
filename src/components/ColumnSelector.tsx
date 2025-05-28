@@ -4,7 +4,7 @@ import useDataset from '../contexts/useDataset';
 function ColumnSelector(): JSX.Element | null {
   const { state, dispatch } = useDataset();
   const {
-    headers, rows, xKey, yKey,
+    headers, data, selectedX, selectedY,
   } = state;
 
   // Filter out empty headers
@@ -12,8 +12,8 @@ function ColumnSelector(): JSX.Element | null {
 
   // Helper to check if a column is numeric
   const isNumericColumn = (header: string): boolean => {
-    if (!rows.length) return false;
-    return rows.every((row) => {
+    if (!data || !data.length) return false;
+    return data.every((row) => {
       const value = row[header];
       if (!value) return false;
       const num = Number(value);
@@ -22,16 +22,20 @@ function ColumnSelector(): JSX.Element | null {
   };
 
   const handleXAxisChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value || null;
+    console.log('[ColumnSelector] X axis changed:', { value, selectedY });
     dispatch({
       type: 'SET_KEYS',
-      payload: { xKey: e.target.value, yKey },
+      payload: { x: value, y: selectedY },
     });
   };
 
   const handleYAxisChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value || null;
+    console.log('[ColumnSelector] Y axis changed:', { selectedX, value });
     dispatch({
       type: 'SET_KEYS',
-      payload: { xKey, yKey: e.target.value },
+      payload: { x: selectedX, y: value },
     });
   };
 
@@ -53,7 +57,7 @@ function ColumnSelector(): JSX.Element | null {
         </label>
         <select
           id="x-axis"
-          value={xKey || ''}
+          value={selectedX || ''}
           onChange={handleXAxisChange}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         >
@@ -75,7 +79,7 @@ function ColumnSelector(): JSX.Element | null {
         </label>
         <select
           id="y-axis"
-          value={yKey || ''}
+          value={selectedY || ''}
           onChange={handleYAxisChange}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         >

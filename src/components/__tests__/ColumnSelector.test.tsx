@@ -4,13 +4,18 @@ import DatasetProvider from '../../contexts/DatasetContext';
 
 describe('ColumnSelector', () => {
   const mockState = {
-    headers: ['name', 'age', 'score'],
-    rows: [
+    file: null,
+    data: [
       { name: 'John', age: '25', score: '95' },
       { name: 'Jane', age: '30', score: '85' },
     ],
+    headers: ['name', 'age', 'score'],
     loading: false,
-    error: undefined,
+    error: null,
+    modalError: null,
+    warning: null,
+    selectedX: null,
+    selectedY: null,
   };
 
   it('renders nothing when no headers are present', () => {
@@ -64,22 +69,22 @@ describe('ColumnSelector', () => {
     expect(yAxisDropdown.getElementsByTagName('option')).toHaveLength(4);
   });
 
-  it('updates context when axes are selected', () => {
+  it('updates context when axes are selected', async () => {
     render(
       <DatasetProvider initialState={mockState}>
         <ColumnSelector />
       </DatasetProvider>,
     );
 
-    const xAxisDropdown = screen.getByLabelText('X Axis');
-    const yAxisDropdown = screen.getByLabelText('Y Axis');
+    const xAxisSelect = screen.getByLabelText('X Axis');
+    const yAxisSelect = screen.getByLabelText('Y Axis');
 
-    fireEvent.change(xAxisDropdown, { target: { value: 'age' } });
-    fireEvent.change(yAxisDropdown, { target: { value: 'score' } });
+    fireEvent.change(xAxisSelect, { target: { value: 'age' } });
+    fireEvent.change(yAxisSelect, { target: { value: 'score' } });
 
     // The actual state update will be tested in the context tests
-    expect(xAxisDropdown).toHaveValue('age');
-    expect(yAxisDropdown).toHaveValue('score');
+    expect(xAxisSelect).toHaveDisplayValue('age');
+    expect(yAxisSelect).toHaveDisplayValue('score');
   });
 
   it('disables non-numeric columns in Y-axis dropdown', () => {
@@ -111,7 +116,7 @@ describe('ColumnSelector', () => {
 
   it('handles empty dataset gracefully', () => {
     render(
-      <DatasetProvider initialState={{ ...mockState, rows: [] }}>
+      <DatasetProvider initialState={{ ...mockState, data: [] }}>
         <ColumnSelector />
       </DatasetProvider>,
     );
