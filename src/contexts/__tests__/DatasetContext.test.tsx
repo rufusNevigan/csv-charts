@@ -10,7 +10,7 @@ function TestComponent() {
     <div>
       <div data-testid="state">{JSON.stringify(state)}</div>
       <div data-testid="headers">{state.headers?.join(',')}</div>
-      <div data-testid="rows">{state.rows?.length}</div>
+      <div data-testid="data-length">{state.data?.length}</div>
       {state.warning && <div data-testid="warning">{state.warning}</div>}
       <button
         type="button"
@@ -31,7 +31,7 @@ function TestComponent() {
         data-testid="set-keys"
         onClick={() => dispatch({
           type: 'SET_KEYS',
-          payload: { xKey: 'age', yKey: 'score' },
+          payload: { x: 'age', y: 'score' },
         })}
       >
         Set Keys
@@ -39,7 +39,7 @@ function TestComponent() {
       <button
         type="button"
         data-testid="set-error"
-        onClick={() => dispatch({ type: 'SET_ERROR', payload: 'Failed to parse CSV file' })}
+        onClick={() => dispatch({ type: 'SET_MODAL_ERROR', payload: 'Failed to parse CSV file' })}
       >
         Set Error
       </button>
@@ -55,7 +55,17 @@ describe('DatasetContext', () => {
       </DatasetProvider>,
     );
     expect(screen.getByTestId('state')).toHaveTextContent(
-      '{"headers":[],"rows":[],"loading":false}',
+      JSON.stringify({
+        file: null,
+        data: [],
+        headers: [],
+        loading: false,
+        error: null,
+        modalError: null,
+        warning: null,
+        selectedX: null,
+        selectedY: null,
+      }),
     );
   });
 
@@ -67,16 +77,31 @@ describe('DatasetContext', () => {
     );
     fireEvent.click(screen.getByTestId('set-file'));
     expect(screen.getByTestId('state')).toHaveTextContent(
-      '{"headers":[],"rows":[],"loading":true}',
+      JSON.stringify({
+        file: {},
+        data: [],
+        headers: [],
+        loading: true,
+        error: null,
+        modalError: null,
+        warning: null,
+        selectedX: null,
+        selectedY: null,
+      }),
     );
   });
 
   it('handles SET_FILE_SUCCESS action with duplicate headers', () => {
     const initialState = {
+      file: null,
+      data: [{ name: 'John', age: '30', name2: 'Doe' }],
       headers: ['name', 'age', 'name'],
-      rows: [{ name: 'John', age: '30', name2: 'Doe' }],
       loading: false,
+      error: null,
+      modalError: null,
       warning: 'Duplicate headers found: name',
+      selectedX: null,
+      selectedY: null,
     };
 
     render(
@@ -86,7 +111,7 @@ describe('DatasetContext', () => {
     );
 
     expect(screen.getByTestId('headers')).toHaveTextContent('name,age,name');
-    expect(screen.getByTestId('rows')).toHaveTextContent('1');
+    expect(screen.getByTestId('data-length')).toHaveTextContent('1');
     expect(screen.getByTestId('warning')).toHaveTextContent(
       'Duplicate headers found: name',
     );
@@ -101,10 +126,15 @@ describe('DatasetContext', () => {
     fireEvent.click(screen.getByTestId('set-error'));
     expect(screen.getByTestId('state')).toHaveTextContent(
       JSON.stringify({
+        file: null,
+        data: [],
         headers: [],
-        rows: [],
         loading: false,
-        error: 'Failed to parse CSV file',
+        error: null,
+        modalError: 'Failed to parse CSV file',
+        warning: null,
+        selectedX: null,
+        selectedY: null,
       }),
     );
   });
@@ -118,22 +148,30 @@ describe('DatasetContext', () => {
     fireEvent.click(screen.getByTestId('set-keys'));
     expect(screen.getByTestId('state')).toHaveTextContent(
       JSON.stringify({
+        file: null,
+        data: [],
         headers: [],
-        rows: [],
         loading: false,
-        xKey: 'age',
-        yKey: 'score',
+        error: null,
+        modalError: null,
+        warning: null,
+        selectedX: 'age',
+        selectedY: 'score',
       }),
     );
   });
 
   it('handles RESET action', () => {
     const initialState = {
+      file: new File([], 'test.csv'),
+      data: [{ name: 'John', age: '30' }],
       headers: ['name', 'age'],
-      rows: [{ name: 'John', age: '30' }],
       loading: true,
-      xKey: 'age',
-      yKey: 'name',
+      error: null,
+      modalError: null,
+      warning: null,
+      selectedX: 'age',
+      selectedY: 'name',
     };
 
     render(
@@ -145,9 +183,15 @@ describe('DatasetContext', () => {
     fireEvent.click(screen.getByTestId('reset'));
     expect(screen.getByTestId('state')).toHaveTextContent(
       JSON.stringify({
+        file: null,
+        data: [],
         headers: [],
-        rows: [],
         loading: false,
+        error: null,
+        modalError: null,
+        warning: null,
+        selectedX: null,
+        selectedY: null,
       }),
     );
   });

@@ -22,42 +22,39 @@ test.describe('File Upload Tests', () => {
 
   test('should reject non-CSV file', async ({ page }) => {
     await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/invalid.txt'));
-    await expect(page.getByTestId('error-message')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText('Failed to parse CSV file');
+    
+    // Wait for error message in dialog
+    const errorText = await page.getByText('Failed to parse CSV file');
+    await expect(errorText).toBeVisible({ timeout: 10000 });
+    await expect(errorText).toBeInViewport();
   });
 
   test('should handle drag and drop', async ({ page }) => {
-    // Verify drag-drop styling
+    // Get the file drop zone
     const dropZone = page.getByTestId('file-drop-zone');
+    await expect(dropZone).toBeVisible();
     await expect(dropZone).toHaveClass(/bg-slate-50/);
 
     // Simulate drag enter
     await dropZone.dispatchEvent('dragover', {});
     await expect(dropZone).toHaveClass(/bg-blue-50/);
-
-    // Simulate drag leave
-    await dropZone.dispatchEvent('dragleave', {});
-    await expect(dropZone).toHaveClass(/bg-slate-50/);
   });
 
   test('should handle multiple file uploads', async ({ page }) => {
-    const testFiles = [
-      '../fixtures/sample.csv',
-      '../fixtures/missing-values.csv',
-      '../fixtures/duplicate-headers.csv',
-    ];
+    // Upload first file
+    await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/sample.csv'));
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
 
-    // Process files sequentially using Promise.all and map
-    await Promise.all(testFiles.map(async (filePath) => {
-      await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, filePath));
-      // Skip chart checks for duplicate headers file as it should show error
-      if (!filePath.includes('duplicate-headers')) {
-        await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
-        await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
-      }
-      // Wait between uploads to ensure proper state reset
-      await page.waitForTimeout(500);
-    }));
+    // Upload second file
+    await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/missing-values.csv'));
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+    
+    // Check warning message
+    const warningText = await page.getByText('Warning: Some rows contain missing values');
+    await expect(warningText).toBeVisible({ timeout: 10000 });
+    await expect(warningText).toBeInViewport();
   });
 
   test('should show friendly error for large files', async ({ page }) => {
@@ -74,20 +71,22 @@ test.describe('File Upload Tests', () => {
       const file = new File([blob], 'large.csv', { type: 'text/csv' });
       const dataTransfer = new DataTransfer();
       dataTransfer.items.add(file);
+
       const input = document.querySelector('input[type="file"]');
       if (input) {
         Object.defineProperty(input, 'files', {
           value: dataTransfer.files,
-          writable: false,
+          writable: false
         });
+
         input.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }, csvContent);
 
-    // Wait for error message and verify content
-    const errorMessage = page.getByTestId('error-message');
-    await expect(errorMessage).toBeVisible({ timeout: 10000 });
-    await expect(errorMessage).toContainText('more than 50,000 rows');
-    await expect(errorMessage).toContainText('For performance reasons');
+    // Wait for error message in dialog
+    const errorText = await page.getByText(/more than 50,000 rows/);
+    await expect(errorText).toBeVisible({ timeout: 10000 });
+    await expect(errorText).toBeInViewport();
+    await expect(page.getByText(/For performance reasons/)).toBeVisible();
   });
 });

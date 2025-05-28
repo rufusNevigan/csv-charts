@@ -10,15 +10,31 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
   const [isDragging, setIsDragging] = useState(false);
   const { dispatch } = useDataset();
 
+  const validateFile = useCallback((file: File): boolean => {
+    // Check file type
+    if (!file.name.toLowerCase().endsWith('.csv') && file.type !== 'text/csv') {
+      dispatch({
+        type: 'SET_ERROR',
+        payload: 'Failed to parse CSV file'
+      });
+      return false;
+    }
+    return true;
+  }, [dispatch]);
+
   const handleFile = useCallback(
     (file: File) => {
+      if (!validateFile(file)) {
+        return;
+      }
+
       if (onFile) {
         onFile(file);
       } else {
         dispatch({ type: 'SET_FILE', payload: file });
       }
     },
-    [onFile, dispatch],
+    [onFile, dispatch, validateFile],
   );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -36,7 +52,7 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
       setIsDragging(false);
 
       const file = e.dataTransfer.files[0];
-      if (file && file.type === 'text/csv') {
+      if (file) {
         handleFile(file);
       }
     },
