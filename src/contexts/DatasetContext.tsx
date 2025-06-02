@@ -3,6 +3,7 @@ import {
   useCallback,
   useMemo,
   useReducer,
+  useEffect,
 } from 'react';
 import DatasetContext, {
   DatasetState,
@@ -11,6 +12,7 @@ import DatasetContext, {
 } from './DatasetContextDefinition';
 import { parseCsv } from '../utils/parseCsv';
 import { InvalidFileError, DuplicateHeadersError } from '../utils/errors';
+import detectNumericColumns from '../utils/detectNumericColumns';
 
 interface DatasetProviderProps {
   children: ReactNode;
@@ -56,7 +58,7 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         selectedX: action.payload.x,
         selectedY: action.payload.y,
         error: null, // Clear any previous errors
-        modalError: null, // Clear any previous modal errors
+        // Don't clear modalError here - it should only be cleared by user action
       };
       break;
 
@@ -117,6 +119,26 @@ function DatasetProvider({
     ...providedInitialState,
   });
 
+  // Auto-select columns when provider is initialized with data (for tests)
+  useEffect(() => {
+    if (
+      state.data.length > 0
+      && state.headers.length >= 2
+      && !state.selectedX
+      && !state.selectedY
+      && !state.loading
+    ) {
+      const numericColumns = detectNumericColumns(state.data, state.headers);
+
+      if (numericColumns.length >= 2) {
+        dispatch({
+          type: 'SET_KEYS',
+          payload: { x: numericColumns[0], y: numericColumns[1] },
+        });
+      }
+    }
+  }, [state.data, state.headers, state.selectedX, state.selectedY, state.loading]);
+
   const handleFile = useCallback(async (file: File) => {
     try {
       // First set the file and loading state
@@ -131,12 +153,7 @@ function DatasetProvider({
 
       // Auto-select first two numeric columns if available
       if (headers.length >= 2) {
-        const numericColumns = headers.filter((header) => rows.every((row) => {
-          const value = row[header];
-          if (!value) return false;
-          const num = Number(value);
-          return !Number.isNaN(num) && typeof num === 'number';
-        }));
+        const numericColumns = detectNumericColumns(rows, headers);
 
         if (numericColumns.length >= 2) {
           dispatch({

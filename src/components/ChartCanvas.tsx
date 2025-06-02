@@ -19,7 +19,6 @@ function ChartCanvas(): JSX.Element {
   } = state;
 
   const [isChartReady, setIsChartReady] = useState(false);
-  const [hasAutoSelected, setHasAutoSelected] = useState(false);
   const [chartData, setChartData] = useState<Record<string, string | number>[]>([]);
 
   // Function to prepare chart data - removed dispatch dependency to avoid loops
@@ -114,31 +113,13 @@ function ChartCanvas(): JSX.Element {
       // Clear any pending timeouts or cleanup if needed
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headers, data, selectedX, selectedY, loading, hasAutoSelected, prepareChartData]);
-
-  // Effect to auto-select numeric columns when data is loaded - only run when not loading
-  useEffect(() => {
-    if (loading || !headers?.length || !data?.length || hasAutoSelected) {
-      return;
-    }
-
-    const numericCols = detectNumericColumns(data, headers);
-    if (numericCols.length >= 2) {
-      dispatch({
-        type: 'SET_KEYS',
-        payload: { x: numericCols[0], y: numericCols[1] },
-      });
-      setHasAutoSelected(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headers, data, hasAutoSelected, loading]);
+  }, [headers, data, selectedX, selectedY, loading, prepareChartData]);
 
   // Reset states when data changes - only run when not loading
   useEffect(() => {
     if (loading) return; // Don't reset states when loading
 
     if (!data?.length || !headers?.length) {
-      setHasAutoSelected(false);
       setIsChartReady(false);
       setChartData([]);
       dispatch({
