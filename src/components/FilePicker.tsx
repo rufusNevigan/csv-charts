@@ -15,7 +15,7 @@ function FilePicker({ onFile }: FilePickerProps): JSX.Element {
     if (!file.name.toLowerCase().endsWith('.csv') && file.type !== 'text/csv') {
       dispatch({
         type: 'SET_ERROR',
-        payload: 'Failed to parse CSV file'
+        payload: 'Failed to parse CSV file',
       });
       return false;
     }

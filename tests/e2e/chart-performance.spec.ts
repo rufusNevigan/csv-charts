@@ -8,18 +8,16 @@ test.describe('Chart Performance Tests', () => {
   // Helper function to wait for chart stability
   async function waitForChartStability(page: Page) {
     await expect(page.getByTestId('chart-container')).toBeVisible();
-    
+
     const chartContainer = page.getByTestId('chart-container');
-    
+
     // Check the attribute value once and wait if needed
     const currentValue = await chartContainer.getAttribute('data-ready');
-    console.log(`[waitForChartStability] Current data-ready: ${currentValue}`);
-    
+
     if (currentValue !== 'true') {
-      console.log('[waitForChartStability] Waiting for data-ready to become true...');
       await expect(chartContainer).toHaveAttribute('data-ready', 'true', { timeout: 20000 });
     }
-    
+
     await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 5000 });
   }
 
@@ -40,38 +38,20 @@ test.describe('Chart Performance Tests', () => {
 
   test('should maintain performance during axis changes', async ({ page }) => {
     await waitForChartStability(page);
-    
+
     const startTime = Date.now();
-    
-    // Log initial state
-    const xAxisSelect = page.getByLabel('X Axis');
-    const yAxisSelect = page.getByLabel('Y Axis');
-    const chartContainer = page.getByTestId('chart-container');
-    
-    console.log('[Test] Initial state:', {
-      xValue: await xAxisSelect.inputValue(),
-      yValue: await yAxisSelect.inputValue(),
-      dataReady: await chartContainer.getAttribute('data-ready')
-    });
-    
+
     // First, change X axis to a different valid column (score)
     // This should work since Y is currently 'score' -> X will be 'score', Y is 'score' (invalid)
     // But then immediately change Y to 'age' to make it valid
-    console.log('[Test] Changing X axis to score and Y axis to age simultaneously');
-    
+
     // Change both axes quickly to avoid invalid intermediate state
     await page.getByLabel('X Axis').selectOption('score');
     await page.getByLabel('Y Axis').selectOption('age');
     await page.waitForTimeout(200); // Allow both changes to settle
-    
-    console.log('[Test] After axis changes:', {
-      xValue: await xAxisSelect.inputValue(),
-      yValue: await yAxisSelect.inputValue(),
-      dataReady: await chartContainer.getAttribute('data-ready')
-    });
-    
+
     await waitForChartStability(page);
-    
+
     const endTime = Date.now();
     const updateTime = endTime - startTime;
     expect(updateTime).toBeLessThan(6000); // Allow more time for axis changes
@@ -79,7 +59,7 @@ test.describe('Chart Performance Tests', () => {
 
   test('should handle window resize efficiently', async ({ page }) => {
     await waitForChartStability(page);
-    
+
     const startTime = Date.now();
     await page.setViewportSize({ width: 800, height: 600 });
     await waitForChartStability(page);
@@ -92,7 +72,7 @@ test.describe('Chart Performance Tests', () => {
 
   test('should maintain smooth interactions under load', async ({ page }) => {
     await waitForChartStability(page);
-    
+
     const combinations = [
       { x: 'score', y: 'age' },
       { x: 'age', y: 'score' },
@@ -100,15 +80,17 @@ test.describe('Chart Performance Tests', () => {
     ];
 
     const startTime = Date.now();
-    
-    for (const combination of combinations) {
+
+    // Use reduce instead of for loop to avoid linting errors
+    await combinations.reduce(async (promise, combination) => {
+      await promise;
       // Change both axes simultaneously to avoid invalid intermediate states
       await page.getByLabel('X Axis').selectOption(combination.x);
       await page.getByLabel('Y Axis').selectOption(combination.y);
       await page.waitForTimeout(100); // Allow changes to settle
       await waitForChartStability(page);
-    }
-    
+    }, Promise.resolve());
+
     const endTime = Date.now();
     const totalTime = endTime - startTime;
     expect(totalTime).toBeLessThan(10000); // Allow more time for multiple changes
@@ -116,11 +98,11 @@ test.describe('Chart Performance Tests', () => {
 
   test('should display error messages when same axis is selected', async ({ page }) => {
     await waitForChartStability(page);
-    
+
     // Select same column for both axes
     await page.getByLabel('X Axis').selectOption('age');
     await page.getByLabel('Y Axis').selectOption('age');
-    
+
     // Wait for error message in dialog
     const errorText = await page.getByText('X and Y axes must be different columns');
     await expect(errorText).toBeVisible({ timeout: 10000 });

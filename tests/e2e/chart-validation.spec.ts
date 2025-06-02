@@ -14,7 +14,7 @@ test.describe('Chart Validation Tests', () => {
     page.on('console', (msg) => messages.push(msg.text()));
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/invalid.txt'));
-    
+
     // Wait for error message in dialog
     const errorText = await page.getByText('Failed to parse CSV file');
     await expect(errorText).toBeVisible({ timeout: 10000 });
@@ -26,12 +26,12 @@ test.describe('Chart Validation Tests', () => {
     page.on('console', (msg) => messages.push(msg.text()));
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/missing-values.csv'));
-    
+
     // Wait for warning message
     const warningText = await page.getByText('Warning: Some rows contain missing values');
     await expect(warningText).toBeVisible({ timeout: 10000 });
     await expect(warningText).toBeInViewport();
-    
+
     // Wait for chart to be ready
     await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
@@ -83,7 +83,7 @@ test.describe('Chart Validation Tests', () => {
     await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
     await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 10000 });
-    
+
     // Check warning message
     const warningText = await page.getByText('Warning: Some rows contain missing values');
     await expect(warningText).toBeVisible({ timeout: 10000 });

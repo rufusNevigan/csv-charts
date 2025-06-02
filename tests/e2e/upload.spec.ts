@@ -22,7 +22,7 @@ test.describe('File Upload Tests', () => {
 
   test('should reject non-CSV file', async ({ page }) => {
     await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/invalid.txt'));
-    
+
     // Wait for error message in dialog
     const errorText = await page.getByText('Failed to parse CSV file');
     await expect(errorText).toBeVisible({ timeout: 10000 });
@@ -50,7 +50,7 @@ test.describe('File Upload Tests', () => {
     await page.getByLabel('Select CSV file').setInputFiles(path.join(dirname, '../fixtures/missing-values.csv'));
     await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
-    
+
     // Check warning message
     const warningText = await page.getByText('Warning: Some rows contain missing values');
     await expect(warningText).toBeVisible({ timeout: 10000 });
@@ -76,7 +76,7 @@ test.describe('File Upload Tests', () => {
       if (input) {
         Object.defineProperty(input, 'files', {
           value: dataTransfer.files,
-          writable: false
+          writable: false,
         });
 
         input.dispatchEvent(new Event('change', { bubbles: true }));

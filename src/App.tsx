@@ -13,7 +13,9 @@ import ErrorModal from './components/ErrorModal';
 
 function AppContent(): JSX.Element {
   const { state } = useDataset();
-  const { loading, error, warning, modalError } = state;
+  const {
+    loading, error, warning,
+  } = state;
 
   return (
     <>

@@ -8,7 +8,6 @@ import DatasetContext, {
   DatasetState,
   DatasetAction,
   initialState,
-  DatasetRow,
 } from './DatasetContextDefinition';
 import { parseCsv } from '../utils/parseCsv';
 import { InvalidFileError, DuplicateHeadersError } from '../utils/errors';
@@ -19,16 +18,6 @@ interface DatasetProviderProps {
 }
 
 function reducer(state: DatasetState, action: DatasetAction): DatasetState {
-  console.log('[DatasetContext] Reducer called with action:', {
-    type: action.type,
-    currentState: {
-      selectedX: state.selectedX,
-      selectedY: state.selectedY,
-      modalError: state.modalError,
-      loading: state.loading
-    }
-  });
-
   let newState: DatasetState;
 
   switch (action.type) {
@@ -45,10 +34,9 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         modalError: null,
         warning: null,
       };
-      console.log('[DatasetContext] SET_FILE:', { file: action.payload?.name });
       break;
 
-    case 'SET_DATA':
+    case 'SET_DATA': {
       // Only set headers if we have data
       const headers = action.payload.length > 0 ? Object.keys(action.payload[0]) : [];
       newState = {
@@ -59,11 +47,8 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         error: null, // Clear any previous errors
         modalError: null, // Clear any previous modal errors
       };
-      console.log('[DatasetContext] SET_DATA:', {
-        rowCount: action.payload.length,
-        headers
-      });
       break;
+    }
 
     case 'SET_KEYS':
       newState = {
@@ -73,7 +58,6 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         error: null, // Clear any previous errors
         modalError: null, // Clear any previous modal errors
       };
-      console.log('[DatasetContext] SET_KEYS:', action.payload);
       break;
 
     case 'SET_LOADING':
@@ -81,7 +65,6 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         ...state,
         loading: action.payload,
       };
-      console.log('[DatasetContext] SET_LOADING:', action.payload);
       break;
 
     case 'SET_ERROR':
@@ -90,7 +73,6 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         error: action.payload,
         loading: false, // Always set loading to false when error occurs
       };
-      console.log('[DatasetContext] SET_ERROR:', action.payload);
       break;
 
     case 'SET_MODAL_ERROR':
@@ -99,7 +81,6 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         modalError: action.payload,
         loading: false, // Always set loading to false when error occurs
       };
-      console.log('[DatasetContext] SET_MODAL_ERROR:', action.payload);
       break;
 
     case 'CLEAR_MODAL_ERROR':
@@ -107,7 +88,6 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         ...state,
         modalError: null,
       };
-      console.log('[DatasetContext] CLEAR_MODAL_ERROR');
       break;
 
     case 'SET_WARNING':
@@ -115,27 +95,15 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         ...state,
         warning: action.payload,
       };
-      console.log('[DatasetContext] SET_WARNING:', action.payload);
       break;
 
     case 'RESET':
       newState = initialState;
-      console.log('[DatasetContext] RESET');
       break;
 
     default:
-      throw new Error(`Unknown action type: ${(action as any).type}`);
+      throw new Error(`Unknown action type: ${(action as { type: string }).type}`);
   }
-
-  console.log('[DatasetContext] State updated:', {
-    type: action.type,
-    newState: {
-      selectedX: newState.selectedX,
-      selectedY: newState.selectedY,
-      modalError: newState.modalError,
-      loading: newState.loading
-    }
-  });
 
   return newState;
 }
@@ -163,20 +131,17 @@ function DatasetProvider({
 
       // Auto-select first two numeric columns if available
       if (headers.length >= 2) {
-        const numericColumns = headers.filter(header => {
-          // Check if all values in this column are numeric
-          return rows.every(row => {
-            const value = row[header];
-            if (!value) return false;
-            const num = Number(value);
-            return !Number.isNaN(num) && typeof num === 'number';
-          });
-        });
+        const numericColumns = headers.filter((header) => rows.every((row) => {
+          const value = row[header];
+          if (!value) return false;
+          const num = Number(value);
+          return !Number.isNaN(num) && typeof num === 'number';
+        }));
 
         if (numericColumns.length >= 2) {
           dispatch({
             type: 'SET_KEYS',
-            payload: { x: numericColumns[0], y: numericColumns[1] }
+            payload: { x: numericColumns[0], y: numericColumns[1] },
           });
         }
       }
@@ -200,7 +165,7 @@ function DatasetProvider({
         dispatch(action);
       }
     },
-    [handleFile]
+    [handleFile],
   );
 
   const value = useMemo(
@@ -208,7 +173,7 @@ function DatasetProvider({
       state,
       dispatch: contextDispatch,
     }),
-    [state, contextDispatch]
+    [state, contextDispatch],
   );
 
   return (

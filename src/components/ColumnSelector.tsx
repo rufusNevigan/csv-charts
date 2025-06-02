@@ -23,7 +23,6 @@ function ColumnSelector(): JSX.Element | null {
 
   const handleXAxisChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value || null;
-    console.log('[ColumnSelector] X axis changed:', { value, selectedY });
     dispatch({
       type: 'SET_KEYS',
       payload: { x: value, y: selectedY },
@@ -32,7 +31,6 @@ function ColumnSelector(): JSX.Element | null {
 
   const handleYAxisChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value || null;
-    console.log('[ColumnSelector] Y axis changed:', { selectedX, value });
     dispatch({
       type: 'SET_KEYS',
       payload: { x: selectedX, y: value },
