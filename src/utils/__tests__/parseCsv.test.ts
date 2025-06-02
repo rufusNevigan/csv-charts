@@ -29,6 +29,33 @@ describe('parseCsv', () => {
     );
   });
 
+  it('returns performance warning when exceeding performance cap', async () => {
+    const rowCount = 10001;
+    const content = `name,age\n${Array(rowCount).fill('John,30').join('\n')}`;
+    const file = createMockFile(content);
+
+    const result = await parseCsv(file, 50000, 10000);
+
+    expect(result.performanceWarning).toBeDefined();
+    expect(result.performanceWarning).toContain('10,001 rows');
+    expect(result.performanceWarning).toContain('more than 10,000 rows');
+    expect(result.performanceWarning).toContain('may affect performance');
+    expect(result.headers).toEqual(['name', 'age']);
+    expect(result.rows).toHaveLength(rowCount);
+  });
+
+  it('does not return performance warning when under performance cap', async () => {
+    const rowCount = 5000;
+    const content = `name,age\n${Array(rowCount).fill('John,30').join('\n')}`;
+    const file = createMockFile(content);
+
+    const result = await parseCsv(file, 50000, 10000);
+
+    expect(result.performanceWarning).toBeUndefined();
+    expect(result.headers).toEqual(['name', 'age']);
+    expect(result.rows).toHaveLength(rowCount);
+  });
+
   it('preserves header names exactly', async () => {
     const file = createMockFile('First Name,Last Name\nJohn,Doe');
     const result = await parseCsv(file);

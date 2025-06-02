@@ -17,6 +17,16 @@ export class CsvTooBigError extends Error {
   }
 }
 
+// Warning for large datasets that may affect performance
+export class CsvPerformanceWarning extends Error {
+  constructor(rowCount: number, performanceCap: number) {
+    super(
+      `This file contains ${rowCount.toLocaleString()} rows. Files with more than ${performanceCap.toLocaleString()} rows may affect performance. Consider filtering your data for better chart rendering speed.`,
+    );
+    this.name = 'CsvPerformanceWarning';
+  }
+}
+
 export class InvalidFileError extends Error {
   constructor() {
     super('Failed to parse CSV file');

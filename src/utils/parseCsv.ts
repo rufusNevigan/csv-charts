@@ -2,6 +2,7 @@ import Papa from 'papaparse';
 import {
   CsvParseError,
   CsvTooBigError,
+  CsvPerformanceWarning,
   InvalidFileError,
   DuplicateHeadersError,
 } from './errors';
@@ -10,6 +11,7 @@ import {
 export {
   CsvParseError,
   CsvTooBigError,
+  CsvPerformanceWarning,
   InvalidFileError,
   DuplicateHeadersError,
 };
@@ -18,9 +20,14 @@ export interface ParsedCsv {
   headers: string[];
   rows: Record<string, string>[];
   duplicateHeaders?: string[];
+  performanceWarning?: string;
 }
 
-export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
+export async function parseCsv(
+  file: File,
+  rowCap = 50000,
+  performanceCap = 10000,
+): Promise<ParsedCsv> {
   return new Promise((resolve, reject) => {
     // Check if file is a CSV
     if (!file.name.toLowerCase().endsWith('.csv')) {
@@ -37,6 +44,8 @@ export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
           resolve({ headers: [], rows: [] });
           return;
         }
+
+        const dataRowCount = results.data.length - 1; // Subtract header row
 
         if (results.data.length > rowCap + 1) {
           // +1 for header row
@@ -65,11 +74,19 @@ export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
           return rowObj;
         });
 
-        // Return result with duplicate headers as optional field instead of throwing error
+        // Check for performance warning
+        let performanceWarning: string | undefined;
+        if (dataRowCount > performanceCap) {
+          const warning = new CsvPerformanceWarning(dataRowCount, performanceCap);
+          performanceWarning = warning.message;
+        }
+
+        // Return result with duplicate headers and performance warning as optional fields
         resolve({
           headers,
           rows,
           duplicateHeaders: duplicateHeaders.length > 0 ? duplicateHeaders : undefined,
+          performanceWarning,
         });
       },
       error: () => {
