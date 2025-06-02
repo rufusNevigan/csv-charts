@@ -44,10 +44,17 @@ test.describe('Chart Validation Tests', () => {
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/duplicate-headers.csv'));
 
-    // Wait for error message in dialog
-    const errorText = await page.getByText('Duplicate headers found: name, name');
-    await expect(errorText).toBeVisible({ timeout: 10000 });
-    await expect(errorText).toBeInViewport();
+    // Wait for warning modal to appear
+    const warningModal = await page.getByTestId('warning-modal');
+    await expect(warningModal).toBeVisible({ timeout: 10000 });
+
+    // Check warning message content
+    const warningText = await page.getByTestId('warning-modal-message');
+    await expect(warningText).toContainText('Duplicate headers found: name');
+
+    // Close the modal
+    await page.getByTestId('modal-close-button').click();
+    await expect(warningModal).not.toBeVisible();
   });
 
   test('should validate column selection', async ({ page }) => {

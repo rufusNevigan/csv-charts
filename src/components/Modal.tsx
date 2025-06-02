@@ -5,6 +5,7 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  'data-testid'?: string;
 }
 
 export default function Modal({
@@ -12,6 +13,7 @@ export default function Modal({
   onClose,
   title,
   children,
+  'data-testid': dataTestId,
 }: ModalProps): JSX.Element | null {
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -45,6 +47,7 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby="modal-title"
         className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 relative"
+        data-testid={dataTestId}
       >
         <div
           className="p-6"

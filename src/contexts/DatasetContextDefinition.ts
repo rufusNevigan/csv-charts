@@ -10,6 +10,7 @@ export interface DatasetState {
   error: string | null;
   modalError: string | null;
   warning: string | null;
+  modalWarning: string | null;
   selectedX: string | null;
   selectedY: string | null;
 }
@@ -23,6 +24,8 @@ export type DatasetAction =
   | { type: 'SET_MODAL_ERROR'; payload: string | null }
   | { type: 'CLEAR_MODAL_ERROR' }
   | { type: 'SET_WARNING'; payload: string | null }
+  | { type: 'SET_MODAL_WARNING'; payload: string | null }
+  | { type: 'CLEAR_MODAL_WARNING' }
   | { type: 'RESET' };
 
 export const initialState: DatasetState = {
@@ -33,6 +36,7 @@ export const initialState: DatasetState = {
   error: null,
   modalError: null,
   warning: null,
+  modalWarning: null,
   selectedX: null,
   selectedY: null,
 };

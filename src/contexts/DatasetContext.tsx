@@ -11,7 +11,7 @@ import DatasetContext, {
   initialState,
 } from './DatasetContextDefinition';
 import { parseCsv } from '../utils/parseCsv';
-import { InvalidFileError, DuplicateHeadersError } from '../utils/errors';
+import { InvalidFileError } from '../utils/errors';
 import detectNumericColumns from '../utils/detectNumericColumns';
 
 interface DatasetProviderProps {
@@ -35,6 +35,7 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         error: null,
         modalError: null,
         warning: null,
+        modalWarning: null,
       };
       break;
 
@@ -99,6 +100,21 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
       };
       break;
 
+    case 'SET_MODAL_WARNING':
+      newState = {
+        ...state,
+        modalWarning: action.payload,
+        loading: false, // Always set loading to false when warning occurs
+      };
+      break;
+
+    case 'CLEAR_MODAL_WARNING':
+      newState = {
+        ...state,
+        modalWarning: null,
+      };
+      break;
+
     case 'RESET':
       newState = initialState;
       break;
@@ -146,10 +162,16 @@ function DatasetProvider({
       dispatch({ type: 'SET_LOADING', payload: true });
 
       // Parse the CSV file
-      const { rows, headers } = await parseCsv(file);
+      const { rows, headers, duplicateHeaders } = await parseCsv(file);
 
       // Set the data (this will also set loading to false)
       dispatch({ type: 'SET_DATA', payload: rows });
+
+      // Handle duplicate headers as warning
+      if (duplicateHeaders && duplicateHeaders.length > 0) {
+        const duplicateMessage = `Duplicate headers found: ${duplicateHeaders.join(', ')}`;
+        dispatch({ type: 'SET_MODAL_WARNING', payload: duplicateMessage });
+      }
 
       // Auto-select first two numeric columns if available
       if (headers.length >= 2) {
@@ -164,7 +186,7 @@ function DatasetProvider({
       }
     } catch (err) {
       // Handle errors and set loading to false
-      if (err instanceof InvalidFileError || err instanceof DuplicateHeadersError) {
+      if (err instanceof InvalidFileError) {
         dispatch({ type: 'SET_MODAL_ERROR', payload: err.message });
       } else if (err instanceof Error) {
         dispatch({ type: 'SET_MODAL_ERROR', payload: err.message });

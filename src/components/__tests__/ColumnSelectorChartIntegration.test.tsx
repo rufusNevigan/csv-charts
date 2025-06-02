@@ -84,6 +84,7 @@ describe('ColumnSelector and ChartCanvas Integration', () => {
     error: null,
     modalError: null,
     warning: null,
+    modalWarning: null,
     selectedX: null,
     selectedY: null,
   };
