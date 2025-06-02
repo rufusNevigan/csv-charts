@@ -6,7 +6,7 @@ describe('ResetButton', () => {
   it('dispatches reset action when clicked', () => {
     const mockState = {
       file: null,
-      data: [{ name: 'Test', value: '10' }],
+      data: [{ name: 'John', value: '10' }],
       headers: ['name', 'value'],
       selectedX: null,
       selectedY: null,
@@ -15,6 +15,9 @@ describe('ResetButton', () => {
       modalError: null,
       warning: null,
       modalWarning: null,
+      filter: '',
+      filteredData: [{ name: 'John', value: '10' }],
+      filterError: null,
     };
 
     render(

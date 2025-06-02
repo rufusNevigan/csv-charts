@@ -87,6 +87,28 @@ describe('ColumnSelector and ChartCanvas Integration', () => {
     modalWarning: null,
     selectedX: null,
     selectedY: null,
+    filter: '',
+    filteredData: [
+      {
+        name: 'Alice',
+        age: '25',
+        score: '95',
+        grade: 'A',
+      },
+      {
+        name: 'Bob',
+        age: '30',
+        score: '85',
+        grade: 'B',
+      },
+      {
+        name: 'Charlie',
+        age: '35',
+        score: '75',
+        grade: 'C',
+      },
+    ],
+    filterError: null,
   };
 
   it('ColumnSelector_ChartCanvas_updates_chart_when_dropdown_selections_change', async () => {

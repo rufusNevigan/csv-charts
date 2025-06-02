@@ -6,8 +6,8 @@ describe('ColumnSelector', () => {
   const mockState = {
     file: null,
     data: [
-      { name: 'John', age: '25', score: '95' },
-      { name: 'Jane', age: '30', score: '85' },
+      { name: 'Alice', age: '25', score: '95' },
+      { name: 'Bob', age: '30', score: '85' },
     ],
     headers: ['name', 'age', 'score'],
     loading: false,
@@ -17,6 +17,12 @@ describe('ColumnSelector', () => {
     modalWarning: null,
     selectedX: null,
     selectedY: null,
+    filter: '',
+    filteredData: [
+      { name: 'Alice', age: '25', score: '95' },
+      { name: 'Bob', age: '30', score: '85' },
+    ],
+    filterError: null,
   };
 
   it('renders nothing when no headers are present', () => {

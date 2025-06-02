@@ -2,6 +2,7 @@ import './App.css';
 import FilePicker from './components/FilePicker';
 import ChartCanvas from './components/ChartCanvas';
 import ColumnSelector from './components/ColumnSelector';
+import FilterBuilder from './components/FilterBuilder';
 import DatasetProvider from './contexts/DatasetContext';
 import useDataset from './contexts/useDataset';
 import AppErrorBoundary from './components/AppErrorBoundary';
@@ -15,7 +16,7 @@ import WarningModal from './components/WarningModal';
 function AppContent(): JSX.Element {
   const { state } = useDataset();
   const {
-    loading, error, warning,
+    loading, error, warning, data,
   } = state;
 
   return (
@@ -30,6 +31,7 @@ function AppContent(): JSX.Element {
         {error && <ErrorMessage message={error} />}
         {warning && <WarningMessage message={warning} />}
         <ColumnSelector />
+        {data.length > 0 && <FilterBuilder />}
         <ChartCanvas />
       </main>
     </>

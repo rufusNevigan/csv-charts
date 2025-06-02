@@ -48,8 +48,8 @@ describe('ChartCanvas', () => {
     const mockState = {
       file: null,
       data: [
-        { name: 'John', city: 'NY', empty: '' },
-        { name: 'Jane', city: 'LA', empty: '' },
+        { name: 'Alice', city: 'New York', empty: '' },
+        { name: 'Bob', city: 'Los Angeles', empty: '' },
       ],
       headers: ['name', 'city', 'empty'],
       loading: false,
@@ -59,6 +59,12 @@ describe('ChartCanvas', () => {
       modalWarning: null,
       selectedX: null,
       selectedY: null,
+      filter: '',
+      filteredData: [
+        { name: 'Alice', city: 'New York', empty: '' },
+        { name: 'Bob', city: 'Los Angeles', empty: '' },
+      ],
+      filterError: null,
     };
 
     render(
@@ -75,8 +81,8 @@ describe('ChartCanvas', () => {
     const mockState = {
       file: null,
       data: [
-        { value: '1', count: '10' },
-        { value: '2', count: '20' },
+        { value: '10', count: '5' },
+        { value: '20', count: '3' },
       ],
       headers: ['value', 'count'],
       loading: false,
@@ -86,6 +92,12 @@ describe('ChartCanvas', () => {
       modalWarning: null,
       selectedX: 'value',
       selectedY: 'count',
+      filter: '',
+      filteredData: [
+        { value: '10', count: '5' },
+        { value: '20', count: '3' },
+      ],
+      filterError: null,
     };
 
     render(

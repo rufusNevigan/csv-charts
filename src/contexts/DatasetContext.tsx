@@ -13,6 +13,7 @@ import DatasetContext, {
 import { parseCsv } from '../utils/parseCsv';
 import { InvalidFileError } from '../utils/errors';
 import detectNumericColumns from '../utils/detectNumericColumns';
+import { applyFilter, FilterParseError } from '../utils/rowFilter';
 
 interface DatasetProviderProps {
   children: ReactNode;
@@ -36,19 +37,41 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
         modalError: null,
         warning: null,
         modalWarning: null,
+        filter: '',
+        filteredData: [],
+        filterError: null,
       };
       break;
 
     case 'SET_DATA': {
       // Only set headers if we have data
       const headers = action.payload.length > 0 ? Object.keys(action.payload[0]) : [];
+
+      // Apply current filter to new data
+      let filteredData = action.payload;
+      let filterError = null;
+
+      if (state.filter) {
+        try {
+          filteredData = applyFilter(action.payload, state.filter);
+        } catch (err) {
+          if (err instanceof FilterParseError) {
+            filterError = err.message;
+          } else {
+            filterError = 'Filter error';
+          }
+        }
+      }
+
       newState = {
         ...state,
         data: action.payload,
+        filteredData,
         headers,
         loading: false, // Always set loading to false when data is set
         error: null, // Clear any previous errors
         modalError: null, // Clear any previous modal errors
+        filterError,
       };
       break;
     }
@@ -112,6 +135,38 @@ function reducer(state: DatasetState, action: DatasetAction): DatasetState {
       newState = {
         ...state,
         modalWarning: null,
+      };
+      break;
+
+    case 'SET_FILTER': {
+      let filteredData = state.data;
+      let filterError = null;
+
+      if (action.payload) {
+        try {
+          filteredData = applyFilter(state.data, action.payload);
+        } catch (err) {
+          if (err instanceof FilterParseError) {
+            filterError = err.message;
+          } else {
+            filterError = 'Filter error';
+          }
+        }
+      }
+
+      newState = {
+        ...state,
+        filter: action.payload,
+        filteredData,
+        filterError,
+      };
+      break;
+    }
+
+    case 'SET_FILTER_ERROR':
+      newState = {
+        ...state,
+        filterError: action.payload,
       };
       break;
 

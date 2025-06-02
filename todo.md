@@ -71,9 +71,9 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 
 ## Milestone 7 – Row Filter & Cap (Stretch)
 
-- [ ] **7.1** DSL parser (`col > value`, etc.) + tests. <!-- prompt:07-01 -->
-- [ ] **7.2** `<FilterBuilder>` UI with helper text. <!-- prompt:07-02 -->
-- [ ] **7.3** Apply filter to dataset; show filtered count badge. <!-- prompt:07-03 -->
+- [x] **7.1** DSL parser (`col > value`, etc.) + tests. <!-- prompt:07-01 -->
+- [x] **7.2** `<FilterBuilder>` UI with helper text. <!-- prompt:07-02 -->
+- [x] **7.3** Apply filter to dataset; show filtered count badge. <!-- prompt:07-03 -->
 - [ ] **7.4** Row-cap constant (10 k) with warning modal. <!-- prompt:07-04 -->
 
 ---
