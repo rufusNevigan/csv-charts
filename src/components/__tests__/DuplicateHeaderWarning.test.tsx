@@ -7,7 +7,7 @@ import App from '../../App';
 // Mock Papa Parse to return duplicate headers
 vi.mock('papaparse', () => ({
   default: {
-    parse: vi.fn((file, options) => {
+    parse: vi.fn((_file, options) => {
       // Simulate duplicate headers CSV
       const mockData = [
         ['Name', 'Age', 'Name'], // Duplicate 'Name' header

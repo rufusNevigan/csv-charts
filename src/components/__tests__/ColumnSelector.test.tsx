@@ -14,6 +14,7 @@ describe('ColumnSelector', () => {
     error: null,
     modalError: null,
     warning: null,
+    modalWarning: null,
     selectedX: null,
     selectedY: null,
   };

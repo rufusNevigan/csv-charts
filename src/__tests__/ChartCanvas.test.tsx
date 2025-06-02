@@ -28,6 +28,7 @@ describe('ChartCanvas', () => {
           error: null,
           modalError: null,
           warning: null,
+          modalWarning: null,
           selectedX: null,
           selectedY: null,
         }}
@@ -50,6 +51,7 @@ describe('ChartCanvas', () => {
           error: null,
           modalError: null,
           warning: null,
+          modalWarning: null,
           selectedX: null,
           selectedY: null,
         }}
@@ -74,6 +76,7 @@ describe('ChartCanvas', () => {
           error: null,
           modalError: null,
           warning: null,
+          modalWarning: null,
           selectedX: null,
           selectedY: null,
         }}
@@ -98,6 +101,7 @@ describe('ChartCanvas', () => {
           error: null,
           modalError: null,
           warning: null,
+          modalWarning: null,
           selectedX: null,
           selectedY: null,
         }}

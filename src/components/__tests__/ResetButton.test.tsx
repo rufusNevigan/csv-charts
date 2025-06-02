@@ -14,6 +14,7 @@ describe('ResetButton', () => {
       error: null,
       modalError: null,
       warning: null,
+      modalWarning: null,
     };
 
     render(
