@@ -4,17 +4,35 @@ import ColumnSelector from '../components/ColumnSelector';
 
 describe('ColumnSelector', () => {
   const mockData = {
+    file: null,
     headers: ['name', 'age', 'score'],
-    rows: [
+    data: [
       { name: 'Alice', age: '25', score: '85' },
       { name: 'Bob', age: '30', score: '92' },
       { name: 'Charlie', age: '35', score: '78' },
     ],
+    loading: false,
+    error: null,
+    modalError: null,
+    warning: null,
+    selectedX: null,
+    selectedY: null,
   };
 
   it('renders nothing when no headers are present', () => {
     render(
-      <DatasetProvider initialState={{ headers: [], rows: [], loading: false }}>
+      <DatasetProvider initialState={{
+        file: null,
+        headers: [],
+        data: [],
+        loading: false,
+        error: null,
+        modalError: null,
+        warning: null,
+        selectedX: null,
+        selectedY: null,
+      }}
+      >
         <ColumnSelector />
       </DatasetProvider>,
     );
@@ -23,7 +41,7 @@ describe('ColumnSelector', () => {
 
   it('renders selectors for X and Y axes when headers are present', () => {
     render(
-      <DatasetProvider initialState={{ ...mockData, loading: false }}>
+      <DatasetProvider initialState={mockData}>
         <ColumnSelector />
       </DatasetProvider>,
     );
@@ -34,7 +52,7 @@ describe('ColumnSelector', () => {
 
   it('disables non-numeric columns in Y axis selector', () => {
     render(
-      <DatasetProvider initialState={{ ...mockData, loading: false }}>
+      <DatasetProvider initialState={mockData}>
         <ColumnSelector />
       </DatasetProvider>,
     );
@@ -49,7 +67,7 @@ describe('ColumnSelector', () => {
 
   it('updates selected columns when options are changed', () => {
     render(
-      <DatasetProvider initialState={{ ...mockData, loading: false }}>
+      <DatasetProvider initialState={mockData}>
         <ColumnSelector />
       </DatasetProvider>,
     );

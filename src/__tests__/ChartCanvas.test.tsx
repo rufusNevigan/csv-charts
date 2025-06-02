@@ -21,9 +21,15 @@ describe('ChartCanvas', () => {
     render(
       <DatasetProvider
         initialState={{
+          file: null,
           headers: [],
-          rows: [],
+          data: [],
           loading: true,
+          error: null,
+          modalError: null,
+          warning: null,
+          selectedX: null,
+          selectedY: null,
         }}
       >
         <ChartCanvas />
@@ -37,9 +43,15 @@ describe('ChartCanvas', () => {
     render(
       <DatasetProvider
         initialState={{
+          file: null,
           headers: [],
-          rows: [],
+          data: [],
           loading: false,
+          error: null,
+          modalError: null,
+          warning: null,
+          selectedX: null,
+          selectedY: null,
         }}
       >
         <ChartCanvas />
@@ -55,9 +67,15 @@ describe('ChartCanvas', () => {
     render(
       <DatasetProvider
         initialState={{
+          file: null,
           headers: ['name', 'email'],
-          rows: [{ name: 'John', email: 'john@example.com' }],
+          data: [{ name: 'John', email: 'john@example.com' }],
           loading: false,
+          error: null,
+          modalError: null,
+          warning: null,
+          selectedX: null,
+          selectedY: null,
         }}
       >
         <ChartCanvas />
@@ -73,9 +91,15 @@ describe('ChartCanvas', () => {
     render(
       <DatasetProvider
         initialState={{
+          file: null,
           headers: ['name', 'value', 'count'],
-          rows: [{ name: 'John', value: '10', count: '20' }],
+          data: [{ name: 'John', value: '10', count: '20' }],
           loading: false,
+          error: null,
+          modalError: null,
+          warning: null,
+          selectedX: null,
+          selectedY: null,
         }}
       >
         <ChartCanvas />

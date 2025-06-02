@@ -14,8 +14,11 @@ test.describe('Chart Validation Tests', () => {
     page.on('console', (msg) => messages.push(msg.text()));
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/invalid.txt'));
-    await expect(page.getByTestId('error-message')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId('error-message')).toContainText('Failed to parse CSV file');
+
+    // Wait for error message in dialog
+    const errorText = await page.getByText('Failed to parse CSV file');
+    await expect(errorText).toBeVisible({ timeout: 10000 });
+    await expect(errorText).toBeInViewport();
   });
 
   test('should handle missing values in CSV', async ({ page }) => {
@@ -23,8 +26,13 @@ test.describe('Chart Validation Tests', () => {
     page.on('console', (msg) => messages.push(msg.text()));
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/missing-values.csv'));
-    await expect(page.getByTestId('warning-message')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId('warning-message')).toContainText('Warning: Some rows contain missing values');
+
+    // Wait for warning message
+    const warningText = await page.getByText('Warning: Some rows contain missing values');
+    await expect(warningText).toBeVisible({ timeout: 10000 });
+    await expect(warningText).toBeInViewport();
+
+    // Wait for chart to be ready
     await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
     await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 10000 });
@@ -36,9 +44,10 @@ test.describe('Chart Validation Tests', () => {
 
     await page.getByLabel('Select CSV file').setInputFiles(path.join(currentDirname, '../fixtures/duplicate-headers.csv'));
 
-    // Verify error message
-    await expect(page.getByTestId('error-message')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId('error-message')).toContainText('Duplicate headers found: name, name');
+    // Wait for error message in dialog
+    const errorText = await page.getByText('Duplicate headers found: name, name');
+    await expect(errorText).toBeVisible({ timeout: 10000 });
+    await expect(errorText).toBeInViewport();
   });
 
   test('should validate column selection', async ({ page }) => {
@@ -53,8 +62,10 @@ test.describe('Chart Validation Tests', () => {
     await page.getByLabel('X Axis').selectOption('age');
     await page.getByLabel('Y Axis').selectOption('age');
 
-    await expect(page.getByTestId('error-message')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId('error-message')).toContainText('X and Y axes must be different columns');
+    // Wait for error message in dialog
+    const errorText = await page.getByText('X and Y axes must be different columns');
+    await expect(errorText).toBeVisible({ timeout: 10000 });
+    await expect(errorText).toBeInViewport();
   });
 
   test('should reset state when new file is uploaded', async ({ page }) => {
@@ -72,7 +83,10 @@ test.describe('Chart Validation Tests', () => {
     await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
     await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(5, { timeout: 10000 });
-    await expect(page.getByTestId('warning-message')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId('warning-message')).toContainText('Warning: Some rows contain missing values');
+
+    // Check warning message
+    const warningText = await page.getByText('Warning: Some rows contain missing values');
+    await expect(warningText).toBeVisible({ timeout: 10000 });
+    await expect(warningText).toBeInViewport();
   });
 });

@@ -10,9 +10,9 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "preview": "vite preview",
     "prepare": "husky install",
-    "test": "vitest --run src/",
+    "test": "node --max-old-space-size=4096 node_modules/vitest/vitest.mjs --run src/",
     "test:e2e": "playwright test tests/e2e",
-    "test:watch": "vitest"
+    "test:watch": "node --max-old-space-size=4096 node_modules/vitest/vitest.mjs"
   },
   "dependencies": {
     "@types/papaparse": "^5.3.15",

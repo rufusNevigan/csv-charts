@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable no-console */
+import { useEffect, useState, useCallback } from 'react';
 import {
   BarChart,
   Bar,
@@ -14,33 +15,140 @@ import detectNumericColumns from '../utils/detectNumericColumns';
 function ChartCanvas(): JSX.Element {
   const { state, dispatch } = useDataset();
   const {
-    headers, rows, xKey, yKey, loading,
+    headers, data, selectedX, selectedY, loading,
   } = state;
+
   const [isChartReady, setIsChartReady] = useState(false);
+  const [chartData, setChartData] = useState<Record<string, string | number>[]>([]);
 
-  // Effect to auto-select numeric columns when data is loaded
+  // Function to prepare chart data - removed dispatch dependency to avoid loops
+  const prepareChartData = useCallback(() => {
+    if (!data || !selectedX || !selectedY) return [];
+
+    let hasWarning = false;
+    const processedData = data.map((row) => {
+      const xValue = row[selectedX];
+      const yValue = row[selectedY];
+
+      // Check for missing values
+      if (xValue === '' || yValue === '') {
+        hasWarning = true;
+      }
+
+      return {
+        ...row,
+        [selectedX]: xValue === '' ? 0 : Number(xValue),
+        [selectedY]: yValue === '' ? 0 : Number(yValue),
+      };
+    });
+
+    // Set warning outside of the data processing to avoid side effects
+    if (hasWarning) {
+      setTimeout(() => {
+        dispatch({
+          type: 'SET_WARNING',
+          payload: 'Warning: Some rows contain missing values',
+        });
+      }, 0);
+    }
+
+    return processedData;
+  }, [data, selectedX, selectedY, dispatch]);
+
+  // Effect to handle error messages and chart ready state - only run when not loading
   useEffect(() => {
-    if (!headers?.length || !rows?.length) return;
+    if (loading) return undefined; // Don't run any logic when loading
 
-    // Find numeric columns
-    const numericCols = detectNumericColumns(rows, headers);
-    if (numericCols.length >= 2 && !xKey && !yKey) {
+    // Reset chart-specific error state, but don't clear file parsing errors
+    dispatch({ type: 'SET_ERROR', payload: null });
+    dispatch({ type: 'SET_WARNING', payload: null });
+
+    // Basic data validation
+    if (!headers?.length || !data?.length) {
+      setIsChartReady(false);
+      return undefined;
+    }
+
+    const numericCols = detectNumericColumns(data, headers);
+
+    // Only validate and show errors if both axes are selected
+    if (selectedX && selectedY) {
+      // Check for same column error
+      if (selectedX === selectedY) {
+        dispatch({
+          type: 'SET_MODAL_ERROR',
+          payload: 'X and Y axes must be different columns',
+        });
+        setIsChartReady(false);
+        return undefined;
+      }
+
+      // Check for non-numeric column error
+      if (!numericCols.includes(selectedX) || !numericCols.includes(selectedY)) {
+        dispatch({
+          type: 'SET_MODAL_ERROR',
+          payload: 'Selected columns must be numeric',
+        });
+        setIsChartReady(false);
+        return undefined;
+      }
+
+      // Both axes are selected and valid - prepare chart data
+      const newChartData = prepareChartData();
+      setChartData(newChartData);
+
+      // Set chart ready when we have valid data
+      if (newChartData.length > 0) {
+        setIsChartReady(true);
+      } else {
+        setIsChartReady(false);
+      }
+    } else {
+      // One or both axes not selected - set to false
+      setIsChartReady(false);
+    }
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Clear any pending timeouts or cleanup if needed
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [headers, data, selectedX, selectedY, loading, prepareChartData]);
+
+  // Reset states when data changes - only run when not loading
+  useEffect(() => {
+    if (loading) return; // Don't reset states when loading
+
+    if (!data?.length || !headers?.length) {
+      setIsChartReady(false);
+      setChartData([]);
       dispatch({
         type: 'SET_KEYS',
-        payload: { xKey: numericCols[0], yKey: numericCols[1] },
+        payload: { x: null, y: null },
+      });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      dispatch({ type: 'SET_WARNING', payload: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, headers, loading]);
+
+  // Effect to handle "no numeric columns" error - only run when not loading
+  useEffect(() => {
+    if (loading || !headers || !data || headers.length === 0) {
+      return;
+    }
+
+    const numericColumns = detectNumericColumns(data, headers);
+    if (numericColumns.length < 2) {
+      dispatch({
+        type: 'SET_ERROR',
+        payload: 'No numeric columns found in the dataset',
       });
     }
-  }, [headers, rows, dispatch, xKey, yKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [headers, data, loading]);
 
-  // Set chart ready state when data is available
-  useEffect(() => {
-    const numericCols = headers && rows ? detectNumericColumns(rows, headers) : [];
-    const hasValidData = headers && rows && xKey && yKey && !loading;
-    const hasNumericColumns = numericCols.length >= 2;
-    setIsChartReady(Boolean(hasValidData && hasNumericColumns));
-  }, [headers, rows, xKey, yKey, loading]);
-
-  // If loading, show loading state
+  // Loading state takes absolute precedence
   if (loading) {
     return (
       <div
@@ -56,8 +164,7 @@ function ChartCanvas(): JSX.Element {
     );
   }
 
-  // If no dataset is loaded, show a prompt
-  if (!headers || !rows || headers.length === 0) {
+  if (!headers || !data || headers.length === 0) {
     return (
       <div
         data-testid="chart-container"
@@ -69,7 +176,8 @@ function ChartCanvas(): JSX.Element {
     );
   }
 
-  const numericColumns = detectNumericColumns(rows, headers);
+  const numericColumns = detectNumericColumns(data, headers);
+
   if (numericColumns.length < 2) {
     return (
       <div
@@ -82,7 +190,7 @@ function ChartCanvas(): JSX.Element {
     );
   }
 
-  if (!xKey || !yKey) {
+  if (!selectedX || !selectedY) {
     return (
       <div
         data-testid="chart-container"
@@ -94,13 +202,6 @@ function ChartCanvas(): JSX.Element {
     );
   }
 
-  // Convert values to numbers, using 0 for missing values
-  const chartData = rows.map((row) => ({
-    ...row,
-    [xKey]: row[xKey] === '' ? 0 : Number(row[xKey]),
-    [yKey]: row[yKey] === '' ? 0 : Number(row[yKey]),
-  }));
-
   return (
     <div
       className="block relative h-96 w-full"
@@ -109,12 +210,13 @@ function ChartCanvas(): JSX.Element {
       style={{
         width: '100%',
         height: '400px',
+        minWidth: '300px',
         minHeight: '400px',
         display: 'block',
         position: 'relative',
       }}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={400} aspect={undefined}>
         <BarChart
           data={chartData}
           margin={{
@@ -126,15 +228,15 @@ function ChartCanvas(): JSX.Element {
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
-            dataKey={xKey}
-            label={{ value: xKey, position: 'bottom', offset: 0 }}
+            dataKey={selectedX}
+            label={{ value: selectedX, position: 'bottom', offset: 0 }}
             stroke="#6b7280"
             tick={{ fill: '#4b5563' }}
           />
           <YAxis
-            dataKey={yKey}
+            dataKey={selectedY}
             label={{
-              value: yKey,
+              value: selectedY,
               angle: -90,
               position: 'left',
               offset: -5,
@@ -151,7 +253,7 @@ function ChartCanvas(): JSX.Element {
             }}
           />
           <Bar
-            dataKey={yKey}
+            dataKey={selectedY}
             fill="#3b82f6"
             radius={[4, 4, 0, 0]}
             maxBarSize={50}
