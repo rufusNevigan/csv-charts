@@ -66,6 +66,9 @@ describe('DatasetContext', () => {
         modalWarning: null,
         selectedX: null,
         selectedY: null,
+        filter: '',
+        filteredData: [],
+        filterError: null,
       }),
     );
   });
@@ -89,6 +92,9 @@ describe('DatasetContext', () => {
         modalWarning: null,
         selectedX: null,
         selectedY: null,
+        filter: '',
+        filteredData: [],
+        filterError: null,
       }),
     );
   });
@@ -105,6 +111,9 @@ describe('DatasetContext', () => {
       modalWarning: null,
       selectedX: null,
       selectedY: null,
+      filter: '',
+      filteredData: [{ name: 'John', age: '30', name2: 'Doe' }],
+      filterError: null,
     };
 
     render(
@@ -139,6 +148,9 @@ describe('DatasetContext', () => {
         modalWarning: null,
         selectedX: null,
         selectedY: null,
+        filter: '',
+        filteredData: [],
+        filterError: null,
       }),
     );
   });
@@ -162,6 +174,9 @@ describe('DatasetContext', () => {
         modalWarning: null,
         selectedX: 'age',
         selectedY: 'score',
+        filter: '',
+        filteredData: [],
+        filterError: null,
       }),
     );
   });
@@ -178,6 +193,9 @@ describe('DatasetContext', () => {
       modalWarning: null,
       selectedX: 'age',
       selectedY: 'name',
+      filter: 'age > 25',
+      filteredData: [{ name: 'John', age: '30' }],
+      filterError: null,
     };
 
     render(
@@ -199,6 +217,9 @@ describe('DatasetContext', () => {
         modalWarning: null,
         selectedX: null,
         selectedY: null,
+        filter: '',
+        filteredData: [],
+        filterError: null,
       }),
     );
   });

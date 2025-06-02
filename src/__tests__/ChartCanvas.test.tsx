@@ -31,6 +31,9 @@ describe('ChartCanvas', () => {
           modalWarning: null,
           selectedX: null,
           selectedY: null,
+          filter: '',
+          filteredData: [],
+          filterError: null,
         }}
       >
         <ChartCanvas />
@@ -54,6 +57,9 @@ describe('ChartCanvas', () => {
           modalWarning: null,
           selectedX: null,
           selectedY: null,
+          filter: '',
+          filteredData: [],
+          filterError: null,
         }}
       >
         <ChartCanvas />
@@ -79,6 +85,9 @@ describe('ChartCanvas', () => {
           modalWarning: null,
           selectedX: null,
           selectedY: null,
+          filter: '',
+          filteredData: [{ name: 'John', email: 'john@example.com' }],
+          filterError: null,
         }}
       >
         <ChartCanvas />
@@ -96,7 +105,10 @@ describe('ChartCanvas', () => {
         initialState={{
           file: null,
           headers: ['name', 'value', 'count'],
-          data: [{ name: 'John', value: '10', count: '20' }],
+          data: [
+            { name: 'Alice', value: '10', count: '5' },
+            { name: 'Bob', value: '20', count: '3' },
+          ],
           loading: false,
           error: null,
           modalError: null,
@@ -104,6 +116,12 @@ describe('ChartCanvas', () => {
           modalWarning: null,
           selectedX: null,
           selectedY: null,
+          filter: '',
+          filteredData: [
+            { name: 'Alice', value: '10', count: '5' },
+            { name: 'Bob', value: '20', count: '3' },
+          ],
+          filterError: null,
         }}
       >
         <ChartCanvas />

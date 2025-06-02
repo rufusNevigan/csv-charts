@@ -29,6 +29,9 @@ const createMockState = (overrides: Partial<DatasetState> = {}): DatasetState =>
   modalWarning: null,
   selectedX: null,
   selectedY: null,
+  filter: '',
+  filteredData: [],
+  filterError: null,
   ...overrides,
 });
 

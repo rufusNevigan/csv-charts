@@ -15,18 +15,18 @@ import detectNumericColumns from '../utils/detectNumericColumns';
 function ChartCanvas(): JSX.Element {
   const { state, dispatch } = useDataset();
   const {
-    headers, data, selectedX, selectedY, loading,
+    headers, data, filteredData, selectedX, selectedY, loading,
   } = state;
 
   const [isChartReady, setIsChartReady] = useState(false);
   const [chartData, setChartData] = useState<Record<string, string | number>[]>([]);
 
-  // Function to prepare chart data - removed dispatch dependency to avoid loops
+  // Function to prepare chart data - use filteredData for chart rendering
   const prepareChartData = useCallback(() => {
-    if (!data || !selectedX || !selectedY) return [];
+    if (!filteredData || !selectedX || !selectedY) return [];
 
     let hasWarning = false;
-    const processedData = data.map((row) => {
+    const processedData = filteredData.map((row) => {
       const xValue = row[selectedX];
       const yValue = row[selectedY];
 
@@ -53,7 +53,7 @@ function ChartCanvas(): JSX.Element {
     }
 
     return processedData;
-  }, [data, selectedX, selectedY, dispatch]);
+  }, [filteredData, selectedX, selectedY, dispatch]);
 
   // Effect to handle error messages and chart ready state - only run when not loading
   useEffect(() => {
@@ -63,7 +63,7 @@ function ChartCanvas(): JSX.Element {
     dispatch({ type: 'SET_ERROR', payload: null });
     dispatch({ type: 'SET_WARNING', payload: null });
 
-    // Basic data validation
+    // Basic data validation - use original data for column detection
     if (!headers?.length || !data?.length) {
       setIsChartReady(false);
       return undefined;
@@ -113,7 +113,7 @@ function ChartCanvas(): JSX.Element {
       // Clear any pending timeouts or cleanup if needed
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headers, data, selectedX, selectedY, loading, prepareChartData]);
+  }, [headers, data, filteredData, selectedX, selectedY, loading, prepareChartData]);
 
   // Reset states when data changes - only run when not loading
   useEffect(() => {

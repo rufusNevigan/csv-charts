@@ -13,6 +13,9 @@ export interface DatasetState {
   modalWarning: string | null;
   selectedX: string | null;
   selectedY: string | null;
+  filter: string;
+  filteredData: DatasetRow[];
+  filterError: string | null;
 }
 
 export type DatasetAction =
@@ -26,6 +29,8 @@ export type DatasetAction =
   | { type: 'SET_WARNING'; payload: string | null }
   | { type: 'SET_MODAL_WARNING'; payload: string | null }
   | { type: 'CLEAR_MODAL_WARNING' }
+  | { type: 'SET_FILTER'; payload: string }
+  | { type: 'SET_FILTER_ERROR'; payload: string | null }
   | { type: 'RESET' };
 
 export const initialState: DatasetState = {
@@ -39,6 +44,9 @@ export const initialState: DatasetState = {
   modalWarning: null,
   selectedX: null,
   selectedY: null,
+  filter: '',
+  filteredData: [],
+  filterError: null,
 };
 
 const DatasetContext = createContext<{

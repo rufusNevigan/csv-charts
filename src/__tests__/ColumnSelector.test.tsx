@@ -7,9 +7,8 @@ describe('ColumnSelector', () => {
     file: null,
     headers: ['name', 'age', 'score'],
     data: [
-      { name: 'Alice', age: '25', score: '85' },
-      { name: 'Bob', age: '30', score: '92' },
-      { name: 'Charlie', age: '35', score: '78' },
+      { name: 'Alice', age: '25', score: '95' },
+      { name: 'Bob', age: '30', score: '85' },
     ],
     loading: false,
     error: null,
@@ -18,6 +17,12 @@ describe('ColumnSelector', () => {
     modalWarning: null,
     selectedX: null,
     selectedY: null,
+    filter: '',
+    filteredData: [
+      { name: 'Alice', age: '25', score: '95' },
+      { name: 'Bob', age: '30', score: '85' },
+    ],
+    filterError: null,
   };
 
   it('renders nothing when no headers are present', () => {
@@ -33,6 +38,9 @@ describe('ColumnSelector', () => {
         modalWarning: null,
         selectedX: null,
         selectedY: null,
+        filter: '',
+        filteredData: [],
+        filterError: null,
       }}
       >
         <ColumnSelector />
