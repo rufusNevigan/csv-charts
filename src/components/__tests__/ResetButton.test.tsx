@@ -5,9 +5,15 @@ import DatasetProvider from '../../contexts/DatasetContext';
 describe('ResetButton', () => {
   it('dispatches reset action when clicked', () => {
     const mockState = {
+      file: null,
+      data: [{ name: 'Test', value: '10' }],
       headers: ['name', 'value'],
-      rows: [{ name: 'Test', value: '10' }],
+      selectedX: null,
+      selectedY: null,
       loading: false,
+      error: null,
+      modalError: null,
+      warning: null,
     };
 
     render(
@@ -22,13 +28,13 @@ describe('ResetButton', () => {
     const { container } = render(
       <DatasetProvider>
         <div data-testid="dataset-consumer">
-          {JSON.stringify({ headers: [], rows: [], loading: false })}
+          {JSON.stringify({ headers: [], data: [], loading: false })}
         </div>
       </DatasetProvider>,
     );
 
     expect(container).toHaveTextContent(
-      JSON.stringify({ headers: [], rows: [], loading: false }),
+      JSON.stringify({ headers: [], data: [], loading: false }),
     );
   });
 });
