@@ -65,7 +65,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 - [x] **6.2** Add `<ResetButton>` clearing context. <!-- prompt:06-01 -->
 - [x] **6.3** Large-file guard (>50 000 rows) with friendly copy. <!-- prompt:06-03 -->
 - [x] **6.4** Modal error system. <!-- prompt:06-02 -->
-- [ ] **6.5** Duplicate-header warning modal. <!-- prompt:06-04 -->
+- [x] **6.5** Duplicate-header warning modal. <!-- prompt:06-04 -->
 
 ---
 
