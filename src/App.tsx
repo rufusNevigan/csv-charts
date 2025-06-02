@@ -10,6 +10,7 @@ import ResetButton from './components/ResetButton';
 import ErrorMessage from './components/ErrorMessage';
 import WarningMessage from './components/WarningMessage';
 import ErrorModal from './components/ErrorModal';
+import WarningModal from './components/WarningModal';
 
 function AppContent(): JSX.Element {
   const { state } = useDataset();
@@ -22,6 +23,7 @@ function AppContent(): JSX.Element {
       <LoadingOverlay show={loading} />
       <ResetButton />
       <ErrorModal />
+      <WarningModal />
       <main className="h-screen flex flex-col items-center justify-start bg-slate-100 p-8">
         <h1 className="text-3xl font-semibold mb-8">CSV Charts</h1>
         <FilePicker />

@@ -17,6 +17,7 @@ export {
 export interface ParsedCsv {
   headers: string[];
   rows: Record<string, string>[];
+  duplicateHeaders?: string[];
 }
 
 export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
@@ -55,15 +56,6 @@ export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
           }
         });
 
-        if (duplicateHeaders.length > 0) {
-          // For each duplicate header, add it twice to match the actual occurrences
-          const duplicateMessage = duplicateHeaders
-            .map((header) => [header, header])
-            .flat();
-          reject(new DuplicateHeadersError(duplicateMessage));
-          return;
-        }
-
         // Convert data to rows with header keys
         const rows = (results.data.slice(1) as string[][]).map((row) => {
           const rowObj: Record<string, string> = {};
@@ -73,7 +65,12 @@ export async function parseCsv(file: File, rowCap = 50000): Promise<ParsedCsv> {
           return rowObj;
         });
 
-        resolve({ headers, rows });
+        // Return result with duplicate headers as optional field instead of throwing error
+        resolve({
+          headers,
+          rows,
+          duplicateHeaders: duplicateHeaders.length > 0 ? duplicateHeaders : undefined,
+        });
       },
       error: () => {
         reject(new InvalidFileError());
