@@ -217,7 +217,9 @@ function DatasetProvider({
       dispatch({ type: 'SET_LOADING', payload: true });
 
       // Parse the CSV file
-      const { rows, headers, duplicateHeaders } = await parseCsv(file);
+      const {
+        rows, headers, duplicateHeaders, performanceWarning,
+      } = await parseCsv(file);
 
       // Set the data (this will also set loading to false)
       dispatch({ type: 'SET_DATA', payload: rows });
@@ -226,6 +228,9 @@ function DatasetProvider({
       if (duplicateHeaders && duplicateHeaders.length > 0) {
         const duplicateMessage = `Duplicate headers found: ${duplicateHeaders.join(', ')}`;
         dispatch({ type: 'SET_MODAL_WARNING', payload: duplicateMessage });
+      } else if (performanceWarning) {
+        // Show performance warning if no duplicate headers warning
+        dispatch({ type: 'SET_MODAL_WARNING', payload: performanceWarning });
       }
 
       // Auto-select first two numeric columns if available

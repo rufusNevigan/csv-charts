@@ -89,4 +89,49 @@ test.describe('File Upload Tests', () => {
     await expect(errorText).toBeInViewport();
     await expect(page.getByText(/For performance reasons/)).toBeVisible();
   });
+
+  test('should show performance warning for files over 10k rows', async ({ page }) => {
+    // Create a CSV file with over 10k rows but under 50k
+    const rows = ['id,name,value'];
+    for (let i = 0; i < 15000; i += 1) {
+      rows.push(`${i + 1},Row ${i + 1},${Math.floor(Math.random() * 1000)}`);
+    }
+    const csvContent = rows.join('\n');
+
+    // Upload the CSV content directly
+    await page.evaluate(async (content) => {
+      const blob = new Blob([content], { type: 'text/csv' });
+      const file = new File([blob], 'medium.csv', { type: 'text/csv' });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+
+      const input = document.querySelector('input[type="file"]');
+      if (input) {
+        Object.defineProperty(input, 'files', {
+          value: dataTransfer.files,
+          writable: false,
+        });
+
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }, csvContent);
+
+    // Wait for warning modal to appear
+    const warningModal = await page.getByTestId('warning-modal');
+    await expect(warningModal).toBeVisible({ timeout: 10000 });
+
+    // Check warning message content
+    const warningText = await page.getByTestId('warning-modal-message');
+    await expect(warningText).toContainText('15,000 rows');
+    await expect(warningText).toContainText('more than 10,000 rows');
+    await expect(warningText).toContainText('may affect performance');
+
+    // Close the modal
+    await page.getByTestId('modal-close-button').click();
+    await expect(warningModal).not.toBeVisible();
+
+    // Verify chart still loads successfully
+    await expect(page.getByTestId('chart-container')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chart-container')).toHaveAttribute('data-ready', 'true', { timeout: 10000 });
+  });
 });
