@@ -83,7 +83,7 @@ An LLM or script can search for the tag, flip `[ ]` → `[x]`, and commit withou
 - [x] **8.1** Production build (`vite build`) < 250 kB gzip. <!-- prompt:08-01 -->
 - [x] **8.2** Write comprehensive `README.md` (desktop-only note). <!-- prompt:08-01 -->
 - [x] **8.3** Add MIT `LICENSE`. <!-- prompt:08-01 -->
-- [ ] **8.4** Create GitHub Release v0.1. <!-- prompt:08-01 -->
+- [x] **8.4** Create GitHub Release v0.1. <!-- prompt:08-01 -->
 
 ---
 
