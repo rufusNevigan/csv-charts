@@ -73,7 +73,7 @@ describe('ChartCanvas', () => {
       </DatasetProvider>,
     );
     expect(
-      screen.getByText('No numeric columns found in the dataset'),
+      screen.getByText('At least one numeric column is required for chart visualization'),
     ).toBeInTheDocument();
   });
 
