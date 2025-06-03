@@ -83,11 +83,12 @@ function ChartCanvas(): JSX.Element {
         return undefined;
       }
 
-      // Check for non-numeric column error
-      if (!numericCols.includes(selectedX) || !numericCols.includes(selectedY)) {
+      // Check for non-numeric column error - at least one axis should be numeric for bar charts
+      const hasNumericAxis = numericCols.includes(selectedX) || numericCols.includes(selectedY);
+      if (!hasNumericAxis) {
         dispatch({
           type: 'SET_MODAL_ERROR',
-          payload: 'Selected columns must be numeric',
+          payload: 'At least one axis must be numeric for bar chart values',
         });
         setIsChartReady(false);
         return undefined;
@@ -139,10 +140,10 @@ function ChartCanvas(): JSX.Element {
     }
 
     const numericColumns = detectNumericColumns(data, headers);
-    if (numericColumns.length < 2) {
+    if (numericColumns.length < 1) {
       dispatch({
         type: 'SET_ERROR',
-        payload: 'No numeric columns found in the dataset',
+        payload: 'At least one numeric column is required for chart visualization',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -178,14 +179,14 @@ function ChartCanvas(): JSX.Element {
 
   const numericColumns = detectNumericColumns(data, headers);
 
-  if (numericColumns.length < 2) {
+  if (numericColumns.length < 1) {
     return (
       <div
         data-testid="chart-container"
         data-ready="false"
         className="text-center text-gray-500 mt-8"
       >
-        No numeric columns found in the dataset
+        At least one numeric column is required for chart visualization
       </div>
     );
   }
